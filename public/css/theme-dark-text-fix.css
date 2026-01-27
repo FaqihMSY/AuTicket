@@ -1,0 +1,65 @@
+/* Dark Mode Text Color Fixes - Strong Overrides */
+
+[data-theme="dark"] * {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] body {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] p,
+[data-theme="dark"] span,
+[data-theme="dark"] div {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] td,
+[data-theme="dark"] th {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] label,
+[data-theme="dark"] .form-label {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] small,
+[data-theme="dark"] .small {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .text-muted {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .card-body,
+[data-theme="dark"] .card-header,
+[data-theme="dark"] .card-title {
+    color: var(--text-primary) !important;
+}
+
+/* Keep badges white */
+[data-theme="dark"] .badge {
+    color: #ffffff !important;
+}
+
+/* Keep navbar white */
+[data-theme="dark"] .navbar-brand,
+[data-theme="dark"] .navbar-nav .nav-link {
+    color: #ffffff !important;
+}
+
+/* Links should be primary color */
+[data-theme="dark"] a:not(.btn):not(.nav-link):not(.navbar-brand) {
+    color: var(--primary-light) !important;
+}
