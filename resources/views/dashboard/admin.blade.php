@@ -6,7 +6,7 @@
     <div class="container-fluid">
         <div class="row mb-4">
             <div class="col-12">
-                <h2>Dashboard - {{ auth()->user()->department->name }}</h2>
+                <h2>Dashboard - {{ auth()->user()->department?->name ?? 'All Departments' }}</h2>
                 <p class="text-muted">Welcome, {{ auth()->user()->name }} | Showing stats for your department</p>
             </div>
         </div>

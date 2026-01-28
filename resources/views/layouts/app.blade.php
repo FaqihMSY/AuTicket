@@ -85,7 +85,9 @@
                             {{ auth()->user()->name }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><span class="dropdown-item-text">{{ auth()->user()->department->name }}</span></li>
+                            <li><span
+                                    class="dropdown-item-text">{{ auth()->user()->department?->name ?? 'All Departments' }}</span>
+                            </li>
                             <li>
                                 <div class="theme-toggle-container">
                                     <div class="theme-toggle-wrapper">

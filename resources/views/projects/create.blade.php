@@ -60,6 +60,23 @@
                                 @enderror
                             </div>
 
+                            <div class="mb-3">
+                                <label for="department_id" class="form-label">Department <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-select @error('department_id') is-invalid @enderror"
+                                    id="department_id" name="department_id" required>
+                                    <option value="">Select Department</option>
+                                    @foreach($departments as $dept)
+                                        <option value="{{ $dept->id }}" {{ old('department_id') == $dept->id ? 'selected' : '' }}>
+                                            {{ $dept->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('department_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
                             <!-- Dates -->
                             <div class="row">
                                 <div class="col-md-6 mb-3">

@@ -67,7 +67,7 @@ class DashboardController extends Controller
                         $subQ->where('auditors.id', $user->auditor->id);
                     });
             })->where('status', 'DRAFT')->count(),
-            'published' => Project::where('department_id', $user->department_id)->where('status', 'PUBLISHED')->count(),
+            'published' => Project::where('status', 'PUBLISHED')->count(),
             'active' => $auditor->projects()->where('status', 'ON_PROGRESS')->count(),
             'waiting' => $auditor->projects()->where('status', 'WAITING')->count(),
             'closed' => $auditor->projects()->where('status', 'CLOSED')->count(),

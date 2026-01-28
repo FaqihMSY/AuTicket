@@ -41,11 +41,7 @@ class ProjectController extends Controller
                         })
                             // 2. Created by Me
                             ->orWhere('created_by', $user->id)
-                            // 3. Published in Dept
-                            ->orWhere(function ($subQ) use ($user) {
-                                $subQ->where('department_id', $user->department_id)
-                                    ->where('status', 'PUBLISHED');
-                            });
+                            ->orWhere('status', 'PUBLISHED');
                     });
                 } else {
                     abort(403, 'User is staff but has no auditor profile.');
@@ -233,11 +229,13 @@ class ProjectController extends Controller
 
         if (auth()->user()->isAdmin()) {
             $assignmentTypes = AssignmentType::all();
+            $departments = Department::all();
         } else {
-            $assignmentTypes = AssignmentType::forDepartment(auth()->user()->department_id)->get();
+            $assignmentTypes = AssignmentType::forDepartment(auth()->user()->department_id ?? 1)->get();
+            $departments = Department::all();
         }
 
-        return view('projects.create', compact('assignmentTypes'));
+        return view('projects.create', compact('assignmentTypes', 'departments'));
     }
 
     public function store(Request $request)
@@ -247,6 +245,7 @@ class ProjectController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'assignment_type_id' => 'required|exists:assignment_types,id',
+            'department_id' => 'required|exists:departments,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
             'description' => 'nullable|string',
@@ -261,7 +260,7 @@ class ProjectController extends Controller
         $status = 'DRAFT';
 
         $project = Project::create([
-            'department_id' => auth()->user()->department_id,
+            'department_id' => $validated['department_id'],
             'assignment_type_id' => $validated['assignment_type_id'],
             'created_by' => auth()->id(),
             'title' => $validated['title'],
