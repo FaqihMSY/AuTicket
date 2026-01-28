@@ -42,12 +42,16 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8|confirmed',
             'role' => 'required|in:admin,pengawas,staff',
-            'department_id' => 'required|exists:departments,id',
+            'department_id' => 'nullable|exists:departments,id',
             'specialization' => 'nullable|string|max:255|required_if:role,staff',
         ]);
 
         $userData = collect($validated)->except('specialization')->toArray();
         $userData['password'] = Hash::make($userData['password']);
+
+        if ($validated['role'] === 'staff') {
+            $userData['department_id'] = null;
+        }
 
         $user = User::create($userData);
 
@@ -80,7 +84,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|min:8|confirmed',
             'role' => 'required|in:admin,pengawas,staff',
-            'department_id' => 'required|exists:departments,id',
+            'department_id' => 'nullable|exists:departments,id',
             'specialization' => 'nullable|string|max:255|required_if:role,staff',
         ]);
 
@@ -90,6 +94,11 @@ class UserController extends Controller
             $userData['password'] = Hash::make($userData['password']);
         } else {
             unset($userData['password']);
+        }
+
+        // Set department_id to NULL for staff (Auditor) role
+        if ($validated['role'] === 'staff') {
+            $userData['department_id'] = null;
         }
 
         $user->update($userData);

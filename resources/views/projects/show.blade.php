@@ -68,7 +68,7 @@
                                 <th>Created By:</th>
                                 <td>
                                     <strong>{{ $project->creator->name }}</strong>
-                                    ({{ $project->creator->department->name }})
+                                    ({{ $project->creator->department?->name ?? 'All Departments' }})
                                     @if(auth()->id() === $project->created_by)
                                         <span class="badge bg-info">You</span>
                                     @endif

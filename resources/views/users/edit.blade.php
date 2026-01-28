@@ -76,11 +76,10 @@
                                 @enderror
                             </div>
 
-                            <div class="mb-3">
-                                <label for="department_id" class="form-label">Department <span
-                                        class="text-danger">*</span></label>
+                            <div class="mb-3" id="departmentField">
+                                <label for="department_id" class="form-label">Department</label>
                                 <select class="form-select @error('department_id') is-invalid @enderror" id="department_id"
-                                    name="department_id" required>
+                                    name="department_id">
                                     <option value="">Select Department</option>
                                     @foreach($departments as $department)
                                         <option value="{{ $department->id }}" {{ old('department_id', $user->department_id) == $department->id ? 'selected' : '' }}>
@@ -91,6 +90,7 @@
                                 @error('department_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                <small class="text-muted">Required for Admin and Pengawas roles</small>
                             </div>
 
                             <!-- Auditor Details (Visible only for Staff) -->
@@ -127,17 +127,20 @@
         document.addEventListener('DOMContentLoaded', function () {
             const roleSelect = document.getElementById('role');
             const auditorFields = document.getElementById('auditorFields');
+            const departmentField = document.getElementById('departmentField');
 
-            function toggleAuditorFields() {
+            function toggleFields() {
                 if (roleSelect.value === 'staff') {
                     auditorFields.style.display = 'block';
+                    departmentField.style.display = 'none';
                 } else {
                     auditorFields.style.display = 'none';
+                    departmentField.style.display = 'block';
                 }
             }
 
-            roleSelect.addEventListener('change', toggleAuditorFields);
-            toggleAuditorFields(); // Run on load
+            roleSelect.addEventListener('change', toggleFields);
+            toggleFields(); // Run on load
         });
     </script>
 @endpush
