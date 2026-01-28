@@ -44,7 +44,7 @@ class ProjectPolicy
 
     public function update(User $user, Project $project): bool
     {
-        if ($user->canManageProjects() && $project->isDraft()) {
+        if ($user->canManageProjects() && ($project->isDraft() || $project->isOnProgress())) {
             return true;
         }
 
@@ -99,7 +99,7 @@ class ProjectPolicy
     public function review(User $user, Project $project): bool
     {
         return $user->canManageProjects()
-            && $user->id === $project->created_by
+            && $user->id === $project->published_by
             && ($project->isWaiting() || $project->status === 'CLOSED');
     }
 
@@ -107,7 +107,9 @@ class ProjectPolicy
     {
         return $user->canManageProjects()
             && $project->isWaiting()
-            && ($user->isAdmin() || $user->id === $project->created_by);
+            && ($user->isAdmin()
+                || $user->id === $project->created_by
+                || $user->id === $project->published_by);
     }
 
     public function cancelReviewSubmission(User $user, Project $project): bool

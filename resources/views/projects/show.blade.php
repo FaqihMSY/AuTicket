@@ -78,6 +78,20 @@
                                 <th>Created At:</th>
                                 <td>{{ $project->created_at->format('d M Y H:i') }}</td>
                             </tr>
+                            @if($project->published_by)
+                                <tr>
+                                    <th>Published By:</th>
+                                    <td>
+                                        <strong>{{ $project->publisher->name }}</strong>
+                                        ({{ $project->publisher->department?->name ?? 'All Departments' }})
+                                        @if(auth()->id() === $project->published_by)
+                                            <span class="badge bg-success">You</span>
+                                        @endif
+                                        <br>
+                                        <small class="text-muted">on {{ $project->published_at->format('d M Y H:i') }}</small>
+                                    </td>
+                                </tr>
+                            @endif
                         </table>
 
                         @if($project->description)

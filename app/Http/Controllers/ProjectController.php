@@ -108,6 +108,7 @@ class ProjectController extends Controller
                 'Actual Start',
                 'Planned End',
                 'Actual End',
+                'Published By',
                 'Auditor Emails'
             ]);
 
@@ -122,6 +123,7 @@ class ProjectController extends Controller
                     $project->started_at ? Carbon::parse($project->started_at)->format('Y-m-d H:i') : '-',
                     Carbon::parse($project->end_date)->format('Y-m-d'),
                     $project->closed_at ? Carbon::parse($project->closed_at)->format('Y-m-d H:i') : '-',
+                    $project->publisher->name ?? '-',
                     $project->auditors->pluck('user.email')->join(','),
                 ]);
             }
@@ -319,6 +321,7 @@ class ProjectController extends Controller
         $project->update([
             'status' => 'PUBLISHED',
             'published_at' => now(),
+            'published_by' => auth()->id(),
         ]);
 
         ActivityLog::log('project_published', $project->id, "Published project: {$project->title}");
