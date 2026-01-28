@@ -172,9 +172,12 @@
                     <div class="card-body">
                         <h6>Workload Indicators:</h6>
                         <ul class="list-unstyled">
-                            <li><span class="badge bg-success">AVAILABLE</span> 0-3 active projects</li>
-                            <li><span class="badge bg-warning">MODERATE</span> 4-5 active projects</li>
-                            <li><span class="badge bg-danger">BUSY</span> 6+ active projects</li>
+                            <li><span class="badge workload-0">0</span> Available</li>
+                            <li><span class="badge workload-1">1</span> Very Light</li>
+                            <li><span class="badge workload-2">2</span> Light</li>
+                            <li><span class="badge workload-3">3</span> Moderate</li>
+                            <li><span class="badge workload-4">4</span> Heavy</li>
+                            <li><span class="badge workload-5">5+</span> Full/Busy</li>
                         </ul>
 
                         <hr>
@@ -197,14 +200,6 @@
     <script src="{{ asset('js/auditor-selection.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Initialize auditor selection
-            loadAuditors();
-
-            // Sort change handler
-            document.getElementById('sortBy').addEventListener('change', function () {
-                loadAuditors();
-            });
-
             // Date validation
             const startDate = document.getElementById('start_date');
             const endDate = document.getElementById('end_date');
@@ -220,64 +215,5 @@
                 }
             });
         });
-
-        function loadAuditors() {
-            const sortBy = document.getElementById('sortBy').value;
-            const auditorsList = document.getElementById('auditorsList');
-
-            // Show loading
-            auditorsList.innerHTML = `
-            <div class="text-center">
-                <div class="spinner-border spinner-border-sm" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                <p class="mb-0 mt-2">Loading auditors...</p>
-            </div>
-        `;
-
-            // Fetch auditors
-            fetch(`/api/auditors?sort=${sortBy}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length === 0) {
-                        auditorsList.innerHTML = '<p class="text-muted mb-0">No auditors available</p>';
-                        return;
-                    }
-
-                    let html = '';
-                    data.forEach(auditor => {
-                        const workloadClass = auditor.workload_status === 'AVAILABLE' ? 'success' :
-                            auditor.workload_status === 'MODERATE' ? 'warning' : 'danger';
-
-                        html += `
-                        <div class="form-check mb-3 p-3 border rounded ${auditor.workload_status === 'BUSY' ? 'bg-light' : ''}">
-                            <input class="form-check-input" type="checkbox" name="auditor_ids[]" 
-                                   value="${auditor.id}" id="auditor${auditor.id}">
-                            <label class="form-check-label w-100" for="auditor${auditor.id}">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <strong>${auditor.user.name}</strong>
-                                        <br>
-                                        <small class="text-muted">${auditor.specialization || 'General'}</small>
-                                        ${auditor.certification ? `<br><small class="text-info">${auditor.certification}</small>` : ''}
-                                    </div>
-                                    <div class="text-end">
-                                        <span class="badge bg-${workloadClass}">${auditor.workload_status}</span>
-                                        <br>
-                                        <small class="text-muted">Load: ${auditor.current_load} projects</small>
-                                    </div>
-                                </div>
-                            </label>
-                        </div>
-                    `;
-                    });
-
-                    auditorsList.innerHTML = html;
-                })
-                .catch(error => {
-                    console.error('Error loading auditors:', error);
-                    auditorsList.innerHTML = '<p class="text-danger mb-0">Error loading auditors. Please refresh the page.</p>';
-                });
-        }
     </script>
 @endpush

@@ -25,8 +25,8 @@
                             <h1 class="mb-0">{{ number_format($auditor->performance_score, 0) }}</h1>
                             <small class="text-muted">Performance Score</small>
                         </div>
-                        <span class="badge bg-{{ $auditor->getWorkloadColor() }}">
-                            {{ $auditor->getWorkloadStatus() }}
+                        <span class="badge {{ $auditor->getWorkloadColorClass() }}">
+                            {{ $auditor->getWorkloadLabel() }} ({{ $auditor->getWorkloadScore() }})
                         </span>
                     </div>
                 </div>

@@ -1,67 +1,78 @@
 // Smart Auditor Selection
 let auditors = [];
 
-function loadAuditors(sortBy = 'performance') {
-    const auditorList = document.getElementById('auditor-list');
-    auditorList.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div></div>';
+function loadAuditors() {
+    const auditorsList = document.getElementById('auditorsList') || document.getElementById('auditor-list');
+    if (!auditorsList) return;
+
+    const sortByElement = document.getElementById('sortBy') || document.getElementById('sort_by');
+    const sortBy = sortByElement ? sortByElement.value : 'performance';
+
+    auditorsList.innerHTML = `
+        <div class="text-center">
+            <div class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mb-0 mt-2">Loading auditors...</p>
+        </div>
+    `;
 
     fetch(`/api/auditors?sort_by=${sortBy}`)
         .then(response => response.json())
         .then(data => {
-            auditors = data;
-            renderAuditorList();
+            if (data.length === 0) {
+                auditorsList.innerHTML = '<p class="text-muted mb-0">No auditors available</p>';
+                return;
+            }
+
+            let html = '';
+            data.forEach(auditor => {
+                const score = auditor.workload_score !== undefined ? auditor.workload_score : (auditor.current_load || 0);
+                const workloadClass = auditor.workload_color_class || ('workload-' + Math.min(score, 5));
+                const label = auditor.workload_status || (score === 0 ? 'Available' : (score <= 2 ? 'Light' : 'Busy'));
+
+                const bgClass = score >= 5 ? 'auditor-busy' : '';
+
+                html += `
+                <div class="form-check mb-3 p-3 border rounded ${bgClass}">
+                    <input class="form-check-input" type="checkbox" name="auditor_ids[]" 
+                           value="${auditor.id}" id="auditor${auditor.id}">
+                    <label class="form-check-label w-100" for="auditor${auditor.id}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>${auditor.user.name}</strong>
+                                <br>
+                                <small class="text-muted">${auditor.specialization || 'General'}</small>
+                                ${auditor.certification ? `<br><small class="text-info">${auditor.certification}</small>` : ''}
+                            </div>
+                            <div class="text-end">
+                                <span class="badge ${workloadClass}">${label} (${score})</span>
+                                <br>
+                                <small class="text-muted">Load: ${score} projects</small>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            `;
+            });
+
+            auditorsList.innerHTML = html;
         })
         .catch(error => {
             console.error('Error loading auditors:', error);
-            auditorList.innerHTML = '<div class="alert alert-danger">Failed to load auditors</div>';
+            auditorsList.innerHTML = '<p class="text-danger mb-0">Error loading auditors. Please refresh the page.</p>';
         });
 }
 
-function renderAuditorList() {
-    const auditorList = document.getElementById('auditor-list');
-    
-    if (auditors.length === 0) {
-        auditorList.innerHTML = '<p class="text-muted">No auditors available</p>';
-        return;
+document.addEventListener('DOMContentLoaded', function () {
+    if (document.getElementById('auditorsList') || document.getElementById('auditor-list')) {
+        loadAuditors();
+
+        const sortByElement = document.getElementById('sortBy') || document.getElementById('sort_by');
+        if (sortByElement) {
+            sortByElement.addEventListener('change', function () {
+                loadAuditors();
+            });
+        }
     }
-
-    let html = '';
-    auditors.forEach(auditor => {
-        const statusColor = auditor.workload_color;
-        const statusText = auditor.workload_status;
-        const stars = '⭐'.repeat(Math.round(auditor.performance_score / 20));
-
-        html += `
-            <div class="form-check border-bottom pb-3 mb-3">
-                <input class="form-check-input" type="checkbox" name="auditor_ids[]" 
-                       value="${auditor.id}" id="auditor_${auditor.id}">
-                <label class="form-check-label w-100" for="auditor_${auditor.id}">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <strong>${auditor.name}</strong>
-                            <span class="badge bg-${statusColor} ms-2">${statusText}</span>
-                        </div>
-                        <div class="text-end">
-                            <div class="small">${stars} (${auditor.performance_score}/100)</div>
-                        </div>
-                    </div>
-                    <div class="small text-muted mt-1">
-                        <div>Current Load: ${auditor.active_projects_count} active projects</div>
-                        ${auditor.specialization ? `<div>Specialization: ${auditor.specialization}</div>` : ''}
-                        ${auditor.certification ? `<div>Certification: ${auditor.certification}</div>` : ''}
-                    </div>
-                </label>
-            </div>
-        `;
-    });
-
-    auditorList.innerHTML = html;
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    loadAuditors();
-
-    document.getElementById('sort_by').addEventListener('change', function() {
-        loadAuditors(this.value);
-    });
 });

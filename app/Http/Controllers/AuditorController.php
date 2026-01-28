@@ -42,8 +42,9 @@ class AuditorController extends Controller
                 'specialization' => $auditor->specialization,
                 'certification' => $auditor->certification,
                 'performance_score' => $auditor->performance_score,
-                'current_load' => $auditor->active_projects_count ?? 0,
-                'workload_status' => $auditor->getWorkloadStatus(),
+                'workload_status' => $auditor->getWorkloadLabel(),
+                'workload_score' => $auditor->getWorkloadScore(),
+                'workload_color_class' => $auditor->getWorkloadColorClass(),
             ];
         });
 

@@ -35,8 +35,8 @@
                                     <td>{{ $auditor->completed_projects_count ?? 0 }}</td>
                                     <td>{{ $auditor->active_projects_count ?? 0 }}</td>
                                     <td>
-                                        <span class="badge bg-{{ $auditor->getWorkloadColor() }}">
-                                            {{ $auditor->getWorkloadStatus() }}
+                                        <span class="badge {{ $auditor->getWorkloadColorClass() }}">
+                                            {{ $auditor->getWorkloadLabel() }} ({{ $auditor->getWorkloadScore() }})
                                         </span>
                                     </td>
                                     <td>

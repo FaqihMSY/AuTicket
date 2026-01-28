@@ -50,26 +50,43 @@ class Auditor extends Model
         return $this->projects()->where('status', 'CLOSED');
     }
 
+    public function getWorkloadScore(): int
+    {
+        return $this->activeProjects()->count();
+    }
+
+    public function getWorkloadColorClass(): string
+    {
+        return match ($this->getWorkloadScore()) {
+            0 => 'workload-0',
+            1 => 'workload-1',
+            2 => 'workload-2',
+            3 => 'workload-3',
+            4 => 'workload-4',
+            default => 'workload-5',
+        };
+    }
+
+    public function getWorkloadLabel(): string
+    {
+        $score = $this->getWorkloadScore();
+        if ($score === 0)
+            return 'Available';
+        if ($score <= 2)
+            return 'Light';
+        if ($score <= 4)
+            return 'Moderate';
+        return 'Busy';
+    }
+
     public function getWorkloadStatus(): string
     {
-        $activeCount = $this->activeProjects()->count();
-
-        if ($activeCount <= 3) {
-            return 'AVAILABLE';
-        } elseif ($activeCount <= 5) {
-            return 'MODERATE';
-        }
-
-        return 'BUSY';
+        return $this->getWorkloadLabel();
     }
 
     public function getWorkloadColor(): string
     {
-        return match ($this->getWorkloadStatus()) {
-            'AVAILABLE' => 'success',
-            'MODERATE' => 'warning',
-            'BUSY' => 'danger',
-        };
+        return $this->getWorkloadColorClass();
     }
 
     public function updatePerformanceScore(): void

@@ -427,6 +427,39 @@ input:checked+.slider:before {
     border-radius: 5px;
 }
 
-[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
-    background: var(--primary);
+/* Workload Heatmap Indicators */
+.workload-0 {
+    background-color: #198754;
+    color: white;
+}
+
+.workload-1 {
+    background-color: #82c91e;
+    color: white;
+}
+
+.workload-2 {
+    background-color: #ffc107;
+    color: black;
+}
+
+.workload-3 {
+    background-color: #fd7e14;
+    color: white;
+}
+
+.workload-4 {
+    background-color: #e03131;
+    color: white;
+}
+
+.workload-5 {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Auditor Selection Highlight */
+.auditor-busy {
+    background-color: var(--bg-tertiary);
+    border-color: var(--danger) !important;
 }
