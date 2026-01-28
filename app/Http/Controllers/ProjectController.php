@@ -227,13 +227,8 @@ class ProjectController extends Controller
     {
         $this->authorize('create', Project::class);
 
-        if (auth()->user()->isAdmin()) {
-            $assignmentTypes = AssignmentType::all();
-            $departments = Department::all();
-        } else {
-            $assignmentTypes = AssignmentType::forDepartment(auth()->user()->department_id ?? 1)->get();
-            $departments = Department::all();
-        }
+        $assignmentTypes = AssignmentType::all();
+        $departments = Department::all();
 
         return view('projects.create', compact('assignmentTypes', 'departments'));
     }
