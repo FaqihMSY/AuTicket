@@ -25,6 +25,8 @@ function loadAuditors() {
                 return;
             }
 
+            const currentAuditorId = auditorsList.dataset.currentAuditorId;
+
             let html = '';
             data.forEach(auditor => {
                 const score = auditor.workload_score !== undefined ? auditor.workload_score : (auditor.current_load || 0);
@@ -33,10 +35,12 @@ function loadAuditors() {
 
                 const bgClass = score >= 5 ? 'auditor-busy' : '';
 
+                const isChecked = (currentAuditorId && String(auditor.id) === String(currentAuditorId)) ? 'checked' : '';
+
                 html += `
                 <div class="form-check mb-3 p-3 border rounded ${bgClass}">
                     <input class="form-check-input" type="checkbox" name="auditor_ids[]" 
-                           value="${auditor.id}" id="auditor${auditor.id}">
+                           value="${auditor.id}" id="auditor${auditor.id}" ${isChecked}>
                     <label class="form-check-label w-100" for="auditor${auditor.id}">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>

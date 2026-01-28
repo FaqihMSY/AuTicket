@@ -26,6 +26,10 @@ class ProjectPolicy
             return true;
         }
 
+        if ($user->id === $project->created_by) {
+            return true;
+        }
+
         if ($user->isAuditor()) {
             return $project->auditors()->where('auditor_id', $user->auditor->id)->exists();
         }
@@ -35,17 +39,29 @@ class ProjectPolicy
 
     public function create(User $user): bool
     {
-        return $user->canManageProjects();
+        return $user->canManageProjects() || $user->isAuditor();
     }
 
     public function update(User $user, Project $project): bool
     {
-        return $user->canManageProjects() && $project->isDraft();
+        if ($user->canManageProjects() && $project->isDraft()) {
+            return true;
+        }
+
+        return $user->isAuditor()
+            && $project->isDraft()
+            && $user->id === $project->created_by;
     }
 
     public function delete(User $user, Project $project): bool
     {
-        return $user->canManageProjects() && $project->isDraft();
+        if ($user->canManageProjects() && $project->isDraft()) {
+            return true;
+        }
+
+        return $user->isAuditor()
+            && $project->isDraft()
+            && $user->id === $project->created_by;
     }
 
     public function publish(User $user, Project $project): bool

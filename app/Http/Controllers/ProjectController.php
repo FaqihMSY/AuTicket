@@ -231,7 +231,7 @@ class ProjectController extends Controller
     {
         $this->authorize('create', Project::class);
 
-        if (auth()->user()->canManageProjects()) {
+        if (auth()->user()->isAdmin()) {
             $assignmentTypes = AssignmentType::all();
         } else {
             $assignmentTypes = AssignmentType::forDepartment(auth()->user()->department_id)->get();
@@ -239,9 +239,6 @@ class ProjectController extends Controller
 
         return view('projects.create', compact('assignmentTypes'));
     }
-
-    // ... (create method continues) ...
-
 
     public function store(Request $request)
     {
@@ -259,6 +256,10 @@ class ProjectController extends Controller
             'instruction_files.*' => 'nullable|file|mimes:pdf,xlsx,xls,doc,docx|max:10240',
         ]);
 
+        // Logic Status: FORCE DRAFT for everyone initially
+        // (Managers can Publish later, Auditors must wait for Manager)
+        $status = 'DRAFT';
+
         $project = Project::create([
             'department_id' => auth()->user()->department_id,
             'assignment_type_id' => $validated['assignment_type_id'],
@@ -268,7 +269,7 @@ class ProjectController extends Controller
             'start_date' => $validated['start_date'],
             'end_date' => $validated['end_date'],
             'priority' => $validated['priority'],
-            'status' => 'DRAFT',
+            'status' => $status,
         ]);
 
         $project->auditors()->attach($validated['auditor_ids']);
@@ -293,8 +294,12 @@ class ProjectController extends Controller
 
         ActivityLog::log('project_created', $project->id, "Created project: {$project->title}");
 
+        $message = auth()->user()->canManageProjects()
+            ? 'Project created successfully.'
+            : 'Project draft submitted. Please wait for Manager approval.';
+
         return redirect()->route('projects.show', $project)
-            ->with('success', 'Project created successfully');
+            ->with('success', $message);
     }
 
     public function show(Project $project)

@@ -16,7 +16,7 @@
                 <a href="{{ route('projects.export', request()->query()) }}" class="btn btn-success me-2">
                     <i class="bi bi-file-earmark-spreadsheet"></i> Export CSV
                 </a>
-                @if(auth()->user()->canManageProjects())
+                @if(auth()->user()->canManageProjects() || auth()->user()->isAuditor())
                     <a href="{{ route('projects.create') }}" class="btn btn-primary">
                         <i class="bi bi-plus-circle"></i> Create New Project
                     </a>

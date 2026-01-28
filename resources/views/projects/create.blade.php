@@ -4,17 +4,20 @@
 
 @section('content')
     <div class="container-fluid">
-        <div class="row mb-4">
-            <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
                 <h2>Create New Project</h2>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('projects.index') }}">Projects</a></li>
-                        <li class="breadcrumb-item active">Create</li>
-                    </ol>
-                </nav>
+                <p class="text-muted">Create a new audit project and assign auditors.</p>
+                @if(auth()->user()->isAuditor() && !auth()->user()->canManageProjects())
+                    <div class="alert alert-warning d-inline-block py-2 px-3 mb-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Draft Mode:</strong> Your project will be saved as a Draft and requires Manager approval.
+                    </div>
+                @endif
             </div>
+            <a href="{{ url()->previous() }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i> Back
+            </a>
         </div>
 
         <div class="row">
@@ -134,7 +137,8 @@
                                 </div>
 
                                 <!-- Auditors List -->
-                                <div id="auditorsList" class="border rounded p-3">
+                                <div id="auditorsList" class="border rounded p-3" 
+                                     data-current-auditor-id="{{ auth()->user()->isAuditor() ? auth()->user()->auditor->id : '' }}">
                                     <div class="text-center">
                                         <div class="spinner-border spinner-border-sm" role="status">
                                             <span class="visually-hidden">Loading...</span>
