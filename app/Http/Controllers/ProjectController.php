@@ -76,6 +76,46 @@ class ProjectController extends Controller
         return view('projects.index', compact('projects'));
     }
 
+    public function pendingApprovals(Request $request)
+    {
+        $user = auth()->user();
+
+        if (!$user->canManageProjects()) {
+            abort(403, 'Only admin and pengawas can access pending approvals.');
+        }
+
+        $query = Project::query()
+            ->where('status', 'DRAFT')
+            ->where('created_by', '!=', $user->id);
+
+        if (!$user->isAdmin()) {
+            $query->where('department_id', $user->department_id);
+        }
+
+        if ($request->filled('department')) {
+            $query->where('department_id', $request->department);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhereHas('creator', function ($subQ) use ($search) {
+                        $subQ->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $projects = $query->with(['department', 'assignmentType', 'creator', 'auditors.user'])
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+        $departments = Department::all();
+
+        return view('projects.pending-approvals', compact('projects', 'departments'));
+    }
+
     public function export(Request $request)
     {
         // Reuse index logic for filtering

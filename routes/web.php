@@ -22,6 +22,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // AuTicket Projects
+    Route::get('/projects/pending-approvals', [ProjectController::class, 'pendingApprovals'])
+        ->name('projects.pendingApprovals');
     Route::get('/projects/export', [ProjectController::class, 'export'])
         ->name('projects.export');
     Route::post('/projects/import', [ProjectController::class, 'import'])

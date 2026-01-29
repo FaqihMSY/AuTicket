@@ -58,6 +58,22 @@
                             <a class="nav-link" href="{{ route('projects.create') }}">Create Project</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="{{ route('projects.pendingApprovals') }}">
+                                Pending Approvals
+                                @php
+                                    $pendingCount = \App\Models\Project::where('status', 'DRAFT')
+                                        ->where('created_by', '!=', auth()->id())
+                                        ->when(!auth()->user()->isAdmin(), function ($q) {
+                                            $q->where('department_id', auth()->user()->department_id);
+                                        })
+                                        ->count();
+                                @endphp
+                                @if($pendingCount > 0)
+                                    <span class="badge bg-danger ms-1">{{ $pendingCount }}</span>
+                                @endif
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="{{ route('auditors.index') }}">Auditor Performance</a>
                         </li>
                     @endif
