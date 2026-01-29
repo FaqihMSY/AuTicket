@@ -314,6 +314,53 @@ class ProjectController extends Controller
         return view('projects.show', compact('project'));
     }
 
+    public function edit(Project $project)
+    {
+        $this->authorize('update', $project);
+
+        $project->load(['department', 'assignmentType', 'auditors.user']);
+        $assignmentTypes = AssignmentType::all();
+        $departments = Department::all();
+        $auditors = User::where('role', 'staff')->with('auditor')->get();
+
+        return view('projects.edit', compact('project', 'assignmentTypes', 'departments', 'auditors'));
+    }
+
+    public function update(Request $request, Project $project)
+    {
+        $this->authorize('update', $project);
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'assignment_type_id' => 'required|exists:assignment_types,id',
+            'department_id' => 'required|exists:departments,id',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            'description' => 'nullable|string',
+            'priority' => 'required|in:LOW,MEDIUM,HIGH',
+            'auditor_ids' => 'required|array|min:1',
+            'auditor_ids.*' => 'exists:auditors,id',
+        ]);
+
+        $project->update([
+            'department_id' => $validated['department_id'],
+            'assignment_type_id' => $validated['assignment_type_id'],
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'start_date' => $validated['start_date'],
+            'end_date' => $validated['end_date'],
+            'priority' => $validated['priority'],
+        ]);
+
+        // Update assigned auditors
+        $project->auditors()->sync($validated['auditor_ids']);
+
+        ActivityLog::log('project_updated', $project->id, "Updated project: {$project->title}");
+
+        return redirect()->route('projects.show', $project)
+            ->with('success', 'Project updated successfully.');
+    }
+
     public function publish(Project $project)
     {
         $this->authorize('publish', $project);

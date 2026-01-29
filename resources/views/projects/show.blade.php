@@ -238,6 +238,13 @@
                         <h6 class="mb-0">Actions</h6>
                     </div>
                     <div class="card-body">
+                        @can('update', $project)
+                            <a href="{{ route('projects.edit', $project) }}" class="btn btn-outline-primary w-100 mb-3">
+                                <i class="bi bi-pencil"></i> Edit Project
+                            </a>
+                            <hr>
+                        @endcan
+
                         @if($project->status === 'DRAFT' && auth()->user()->canManageProjects())
                             <!-- Publish Project -->
                             <form method="POST" action="{{ route('projects.publish', $project) }}"

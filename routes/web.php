@@ -28,6 +28,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('projects.import');
     Route::resource('projects', ProjectController::class)->except(['edit', 'update', 'destroy']);
 
+    Route::get('/projects/{project}/edit', [ProjectController::class, 'edit'])
+        ->name('projects.edit');
+    Route::put('/projects/{project}', [ProjectController::class, 'update'])
+        ->name('projects.update');
+
     Route::post('/projects/{project}/publish', [ProjectController::class, 'publish'])
         ->name('projects.publish');
 

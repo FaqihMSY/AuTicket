@@ -44,13 +44,26 @@ class ProjectPolicy
 
     public function update(User $user, Project $project): bool
     {
-        if ($user->canManageProjects() && ($project->isDraft() || $project->isOnProgress())) {
+        
+        if ($user->isAdmin()) {
             return true;
         }
 
-        return $user->isAuditor()
-            && $project->isDraft()
-            && $user->id === $project->created_by;
+        $isEditableStatus = $project->isDraft() || $project->isPublished() || $project->isOnProgress();
+
+        if (!$isEditableStatus) {
+            return false;
+        }
+
+        if ($user->canManageProjects()) {
+            return $user->id === $project->created_by || $user->id === $project->published_by;
+        }
+
+        if ($user->role === 'staff') {
+            return $project->isDraft() && $user->id === $project->created_by;
+        }
+
+        return false;
     }
 
     public function delete(User $user, Project $project): bool
