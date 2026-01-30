@@ -77,6 +77,15 @@ class UserSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'name' => 'Reviewer Audit',
+                'email' => 'reviewer@auticket.local',
+                'password' => Hash::make('password'),
+                'department_id' => $auditDeptId,
+                'role' => 'reviewer',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ];
 
         foreach ($users as $user) {

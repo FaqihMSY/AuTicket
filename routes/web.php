@@ -53,6 +53,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/projects/{project}/upload-result', [ProjectController::class, 'uploadResult'])
         ->name('projects.uploadResult');
 
+    Route::patch('/projects/{project}/assign-reviewer', [ProjectController::class, 'assignReviewer'])
+        ->name('projects.assignReviewer');
+
     Route::get('/attachments/{attachment}/download', [ProjectController::class, 'downloadAttachment'])
         ->name('attachments.download');
 

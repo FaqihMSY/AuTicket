@@ -172,6 +172,32 @@
                                 @enderror
                             </div>
 
+                            <!-- Reviewer Selection -->
+                            @if(auth()->user()->canManageProjects())
+                                <div class="mb-4">
+                                    <label for="reviewer_id" class="form-label">
+                                        Assign Reviewer (Optional)
+                                        <i class="bi bi-info-circle text-muted" data-bs-toggle="tooltip" 
+                                           title="If assigned, this reviewer can close the project after review"></i>
+                                    </label>
+                                    <select class="form-select @error('reviewer_id') is-invalid @enderror" 
+                                            id="reviewer_id" name="reviewer_id">
+                                        <option value="">No reviewer needed</option>
+                                        @foreach($reviewers as $reviewer)
+                                            <option value="{{ $reviewer->id }}" {{ old('reviewer_id') == $reviewer->id ? 'selected' : '' }}>
+                                                {{ $reviewer->name }} ({{ $reviewer->email }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <small class="text-muted">
+                                        Reviewer can be assigned now or later when project status is WAITING
+                                    </small>
+                                    @error('reviewer_id')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            @endif
+
                             <!-- Submit Buttons -->
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-primary">

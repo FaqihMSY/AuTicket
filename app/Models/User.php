@@ -58,6 +58,11 @@ class User extends Authenticatable
         return $this->role === 'staff';
     }
 
+    public function isReviewer(): bool
+    {
+        return $this->role === 'reviewer';
+    }
+
     public function isAuditor(): bool
     {
         return $this->auditor()->exists();
@@ -66,5 +71,10 @@ class User extends Authenticatable
     public function canManageProjects(): bool
     {
         return in_array($this->role, ['admin', 'pengawas']);
+    }
+
+    public function canReviewProjects(): bool
+    {
+        return in_array($this->role, ['admin', 'pengawas', 'reviewer']);
     }
 }

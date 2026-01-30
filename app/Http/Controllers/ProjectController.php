@@ -271,8 +271,9 @@ class ProjectController extends Controller
 
         $assignmentTypes = AssignmentType::all();
         $departments = Department::all();
+        $reviewers = User::where('role', 'reviewer')->get();
 
-        return view('projects.create', compact('assignmentTypes', 'departments'));
+        return view('projects.create', compact('assignmentTypes', 'departments', 'reviewers'));
     }
 
     public function store(Request $request)
@@ -289,6 +290,7 @@ class ProjectController extends Controller
             'priority' => 'required|in:LOW,MEDIUM,HIGH',
             'auditor_ids' => 'required|array|min:1',
             'auditor_ids.*' => 'exists:auditors,id',
+            'reviewer_id' => 'nullable|exists:users,id',
             'instruction_files.*' => 'nullable|file|mimes:pdf,xlsx,xls,doc,docx|max:10240',
         ]);
 
@@ -300,6 +302,7 @@ class ProjectController extends Controller
             'department_id' => $validated['department_id'],
             'assignment_type_id' => $validated['assignment_type_id'],
             'created_by' => auth()->id(),
+            'reviewer_id' => $validated['reviewer_id'] ?? null,
             'title' => $validated['title'],
             'description' => $validated['description'],
             'start_date' => $validated['start_date'],
@@ -347,6 +350,8 @@ class ProjectController extends Controller
             'assignmentType',
             'auditors.user',
             'creator.department',
+            'publisher',
+            'reviewer',
             'attachments.uploader',
             'reviews'
         ]);
@@ -362,8 +367,9 @@ class ProjectController extends Controller
         $assignmentTypes = AssignmentType::all();
         $departments = Department::all();
         $auditors = User::where('role', 'staff')->with('auditor')->get();
+        $reviewers = User::where('role', 'reviewer')->get();
 
-        return view('projects.edit', compact('project', 'assignmentTypes', 'departments', 'auditors'));
+        return view('projects.edit', compact('project', 'assignmentTypes', 'departments', 'auditors', 'reviewers'));
     }
 
     public function update(Request $request, Project $project)
@@ -380,11 +386,13 @@ class ProjectController extends Controller
             'priority' => 'required|in:LOW,MEDIUM,HIGH',
             'auditor_ids' => 'required|array|min:1',
             'auditor_ids.*' => 'exists:auditors,id',
+            'reviewer_id' => 'nullable|exists:users,id',
         ]);
 
         $project->update([
             'department_id' => $validated['department_id'],
             'assignment_type_id' => $validated['assignment_type_id'],
+            'reviewer_id' => $validated['reviewer_id'] ?? null,
             'title' => $validated['title'],
             'description' => $validated['description'],
             'start_date' => $validated['start_date'],
@@ -526,5 +534,29 @@ class ProjectController extends Controller
         ActivityLog::log('attachment_deleted', $attachment->project_id, "Deleted attachment: {$attachment->original_filename}");
 
         return back()->with('success', 'Attachment deleted successfully.');
+    }
+
+    public function assignReviewer(Request $request, Project $project)
+    {
+        $this->authorize('assignReviewer', $project);
+
+        $validated = $request->validate([
+            'reviewer_id' => 'required|exists:users,id',
+        ]);
+
+        // Verify the user is actually a reviewer
+        $reviewer = User::findOrFail($validated['reviewer_id']);
+        if (!$reviewer->isReviewer()) {
+            return back()->with('error', 'Selected user is not a reviewer.');
+        }
+
+        $project->update([
+            'reviewer_id' => $validated['reviewer_id'],
+        ]);
+
+        ActivityLog::log('reviewer_assigned', $project->id, "Assigned reviewer {$reviewer->name} to project: {$project->title}");
+
+        return redirect()->route('projects.show', $project)
+            ->with('success', "Reviewer {$reviewer->name} has been assigned to this project.");
     }
 }

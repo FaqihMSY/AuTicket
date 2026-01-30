@@ -15,6 +15,10 @@ class DashboardController extends Controller
             return $this->adminDashboard();
         }
 
+        if ($user->isReviewer()) {
+            return $this->reviewerDashboard();
+        }
+
         return $this->auditorDashboard();
     }
 
@@ -82,5 +86,29 @@ class DashboardController extends Controller
             ->get();
 
         return view('dashboard.auditor', compact('stats', 'activeProjects'));
+    }
+
+    private function reviewerDashboard()
+    {
+        $user = auth()->user();
+
+        // Projects assigned to this reviewer
+        $assignedProjects = Project::where('reviewer_id', $user->id)
+            ->with(['department', 'assignmentType', 'creator'])
+            ->whereIn('status', ['WAITING', 'CLOSED'])
+            ->latest()
+            ->get();
+
+        $stats = [
+            'waiting' => Project::where('reviewer_id', $user->id)
+                ->where('status', 'WAITING')
+                ->count(),
+            'closed' => Project::where('reviewer_id', $user->id)
+                ->where('status', 'CLOSED')
+                ->count(),
+            'total_assigned' => Project::where('reviewer_id', $user->id)->count(),
+        ];
+
+        return view('dashboard.reviewer', compact('stats', 'assignedProjects'));
     }
 }

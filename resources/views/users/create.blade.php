@@ -67,6 +67,8 @@
                                     </option>
                                     <option value="pengawas" {{ old('role') === 'pengawas' ? 'selected' : '' }}>Pengawas
                                         (Level 2)</option>
+                                    <option value="reviewer" {{ old('role') === 'reviewer' ? 'selected' : '' }}>Reviewer
+                                    </option>
                                     <option value="staff" {{ old('role') === 'staff' ? 'selected' : '' }}>Staff (Level 3)
                                     </option>
                                 </select>

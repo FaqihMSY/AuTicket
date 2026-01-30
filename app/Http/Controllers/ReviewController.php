@@ -101,12 +101,17 @@ class ReviewController extends Controller
             ]);
         }
 
-        $project->close();
-
-        ActivityLog::log('project_closed', $project->id, "Closed project with reviews: {$project->title}");
+        if (auth()->user()->can('close', $project)) {
+            $project->close();
+            ActivityLog::log('project_closed', $project->id, "Closed project with reviews: {$project->title}");
+            $message = 'Reviews submitted and project closed successfully';
+        } else {
+            ActivityLog::log('review_submitted', $project->id, "Submitted review for project: {$project->title}");
+            $message = 'Review submitted successfully. Only the manager or assigned reviewer can close this project.';
+        }
 
         return redirect()->route('projects.show', $project)
-            ->with('success', 'Reviews submitted and project closed successfully');
+            ->with('success', $message);
     }
 
     public function edit(Project $project)
@@ -146,7 +151,7 @@ class ReviewController extends Controller
 
         foreach ($validated['reviews'] as $reviewData) {
             $review = Review::findOrFail($reviewData['review_id']);
-            
+
             $review->update([
                 'overall_rating' => $reviewData['overall_rating'],
                 'timeliness_rating' => $reviewData['timeliness_rating'] ?? null,

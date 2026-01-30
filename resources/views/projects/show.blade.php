@@ -92,6 +92,20 @@
                                     </td>
                                 </tr>
                             @endif
+                            @if($project->reviewer_id)
+                                <tr>
+                                    <th>Assigned Reviewer:</th>
+                                    <td>
+                                        <strong>{{ $project->reviewer->name }}</strong>
+                                        ({{ $project->reviewer->email }})
+                                        @if(auth()->id() === $project->reviewer_id)
+                                            <span class="badge bg-info">You</span>
+                                        @endif
+                                        <br>
+                                        <small class="text-muted">Can review and close this project</small>
+                                    </td>
+                                </tr>
+                            @endif
                         </table>
 
                         @if($project->description)
@@ -291,6 +305,16 @@
                                 <p class="small text-muted mb-2">Review auditor performance and close this project.</p>
                             @endcan
 
+                            @if(auth()->user()->canManageProjects() && !$project->reviewer_id)
+                                <!-- Delegate to Supervisor (Optional) -->
+                                <button type="button" class="btn btn-outline-info w-100 mb-2" data-bs-toggle="modal"
+                                    data-bs-target="#requestReviewModal">
+                                    <i class="bi bi-person-check"></i> Delegate to Supervisor (Optional)
+                                </button>
+                                <p class="small text-muted mb-2">Optional: Assign a supervisor to review and close this project on
+                                    your behalf.</p>
+                            @endif
+
                             @can('cancelSubmission', $project)
                                 <!-- Cancel Submission -->
                                 <form method="POST" action="{{ route('projects.cancelSubmission', $project) }}"
@@ -375,4 +399,40 @@
             </div>
         </div>
     </div>
+
+    <!-- Request Review Modal -->
+    @if(auth()->user()->canManageProjects() && $project->status === 'WAITING' && !$project->reviewer_id)
+        <div class="modal fade" id="requestReviewModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Request Review from Supervisor</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form method="POST" action="{{ route('projects.assignReviewer', $project) }}">
+                        @csrf
+                        @method('PATCH')
+                        <div class="modal-body">
+                            <p>Assign a reviewer who will have permission to close this project after reviewing.</p>
+                            <div class="mb-3">
+                                <label for="reviewer_id" class="form-label">Select Reviewer</label>
+                                <select class="form-select" id="reviewer_id" name="reviewer_id" required>
+                                    <option value="">Choose a reviewer...</option>
+                                    @foreach(\App\Models\User::where('role', 'reviewer')->get() as $reviewer)
+                                        <option value="{{ $reviewer->id }}">
+                                            {{ $reviewer->name }} ({{ $reviewer->email }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Assign Reviewer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
 @endsection

@@ -17,7 +17,7 @@ class UserController extends Controller
         $this->authorize('viewAny', User::class);
 
         $users = User::with('department')
-            ->orderByRaw("FIELD(role, 'admin', 'pengawas', 'staff')")
+            ->orderByRaw("FIELD(role, 'admin', 'pengawas', 'reviewer', 'staff')")
             ->orderBy('name')
             ->get();
 
@@ -41,7 +41,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8|confirmed',
-            'role' => 'required|in:admin,pengawas,staff',
+            'role' => 'required|in:admin,pengawas,reviewer,staff',
             'department_id' => 'nullable|exists:departments,id',
             'specialization' => 'nullable|string|max:255|required_if:role,staff',
         ]);
@@ -83,7 +83,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|min:8|confirmed',
-            'role' => 'required|in:admin,pengawas,staff',
+            'role' => 'required|in:admin,pengawas,reviewer,staff',
             'department_id' => 'nullable|exists:departments,id',
             'specialization' => 'nullable|string|max:255|required_if:role,staff',
         ]);

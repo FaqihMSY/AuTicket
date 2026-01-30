@@ -30,6 +30,11 @@ class ProjectPolicy
             return true;
         }
 
+        // Assigned reviewer can view
+        if ($user->isReviewer() && $project->reviewer_id === $user->id) {
+            return true;
+        }
+
         if ($user->isAuditor()) {
             return $project->auditors()->where('auditor_id', $user->auditor->id)->exists();
         }
@@ -44,7 +49,7 @@ class ProjectPolicy
 
     public function update(User $user, Project $project): bool
     {
-        
+
         if ($user->isAdmin()) {
             return true;
         }
@@ -111,9 +116,32 @@ class ProjectPolicy
 
     public function review(User $user, Project $project): bool
     {
-        return $user->canManageProjects()
-            && $user->id === $project->published_by
-            && ($project->isWaiting() || $project->status === 'CLOSED');
+        // Any manager can review
+        if ($user->canManageProjects()) {
+            return ($project->isWaiting() || $project->status === 'CLOSED');
+        }
+
+        // Assigned reviewer can review
+        if ($project->reviewer_id === $user->id) {
+            return ($project->isWaiting() || $project->status === 'CLOSED');
+        }
+
+        return false;
+    }
+
+    public function close(User $user, Project $project): bool
+    {
+        // Manager can always close
+        if ($user->canManageProjects()) {
+            return true;
+        }
+
+        // Assigned reviewer can close
+        if ($project->reviewer_id === $user->id) {
+            return true;
+        }
+
+        return false;
     }
 
     public function cancelSubmission(User $user, Project $project): bool
@@ -133,5 +161,21 @@ class ProjectPolicy
 
         return $project->isWaiting()
             && $project->auditors()->where('auditor_id', $user->auditor->id ?? 0)->exists();
+    }
+
+    public function assignReviewer(User $user, Project $project): bool
+    {
+        // Only managers can assign reviewers
+        if (!$user->canManageProjects()) {
+            return false;
+        }
+
+        // Can assign reviewer to WAITING projects
+        if ($project->status === 'WAITING') {
+            return true;
+        }
+
+        // Can also assign during creation/editing (DRAFT, PUBLISHED, ON_PROGRESS)
+        return $this->update($user, $project);
     }
 }

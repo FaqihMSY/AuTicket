@@ -14,6 +14,7 @@ class Project extends Model
         'assignment_type_id',
         'created_by',
         'published_by',
+        'reviewer_id',
         'title',
         'description',
         'start_date',
@@ -53,6 +54,11 @@ class Project extends Model
     public function publisher(): BelongsTo
     {
         return $this->belongsTo(User::class, 'published_by');
+    }
+
+    public function reviewer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reviewer_id');
     }
 
     public function auditors(): BelongsToMany

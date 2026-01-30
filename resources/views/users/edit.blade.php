@@ -68,6 +68,8 @@
                                         (Level 1)</option>
                                     <option value="pengawas" {{ old('role', $user->role) === 'pengawas' ? 'selected' : '' }}>
                                         Pengawas (Level 2)</option>
+                                    <option value="reviewer" {{ old('role', $user->role) === 'reviewer' ? 'selected' : '' }}>
+                                        Reviewer</option>
                                     <option value="staff" {{ old('role', $user->role) === 'staff' ? 'selected' : '' }}>Staff
                                         (Level 3)</option>
                                 </select>
