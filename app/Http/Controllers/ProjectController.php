@@ -18,9 +18,43 @@ use Spatie\SimpleExcel\SimpleExcelReader;
 class ProjectController extends Controller
 {
     use AuthorizesRequests;
+    public function history(Request $request)
+    {
+        $query = Project::query()->where('status', 'CLOSED');
+        $user = auth()->user();
+
+        // Authorization Filter
+        if (!$user->isAdmin() && !$user->canManageProjects()) {
+            if ($user->auditor) {
+                $query->whereHas('auditors', function ($subQ) use ($user) {
+                    $subQ->where('auditors.id', $user->auditor->id);
+                });
+            } else {
+                abort(403, 'User is staff but has no auditor profile.');
+            }
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhereHas('assignmentType', function ($subQ) use ($search) {
+                        $subQ->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $projects = $query->with(['department', 'assignmentType', 'creator'])
+            ->latest('closed_at')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('projects.history', compact('projects'));
+    }
+
     public function index(Request $request)
     {
-        $query = Project::query();
+        $query = Project::query()->where('status', '!=', 'CLOSED');
         $user = auth()->user();
 
         // 1. Authorization Filter (Show only relevant projects)
@@ -116,7 +150,21 @@ class ProjectController extends Controller
             });
         }
 
-        // Export ALL projects (ignore filters)
+        // Apply filters if present
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhereHas('assignmentType', function ($subQ) use ($search) {
+                        $subQ->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
         $projects = $query->latest()->get();
 
         $headers = [
@@ -203,7 +251,11 @@ class ProjectController extends Controller
                 }
 
                 $department = Department::where('name', $departmentName)->first();
-                $deptId = $department ? $department->id : auth()->user()->department_id;
+                $deptId = $department ? $department->id : null;
+
+                if (!$deptId) {
+                    $deptId = Department::first()?->id;
+                }
 
                 // Auditors
                 $auditorEmails = array_map('trim', explode(',', $auditorEmailsStr));
@@ -352,7 +404,7 @@ class ProjectController extends Controller
             'department',
             'assignmentType',
             'auditors.user',
-            'creator.department',
+            'creator',
             'publisher',
             'reviewer',
             'attachments.uploader',
@@ -371,8 +423,9 @@ class ProjectController extends Controller
         $departments = Department::all();
         $auditors = User::where('role', 'staff')->with('auditor')->get();
         $reviewers = User::where('role', 'reviewer')->get();
+        $managers = User::whereIn('role', ['admin', 'pengawas'])->get();
 
-        return view('projects.edit', compact('project', 'assignmentTypes', 'departments', 'auditors', 'reviewers'));
+        return view('projects.edit', compact('project', 'assignmentTypes', 'departments', 'auditors', 'reviewers', 'managers'));
     }
 
     public function update(Request $request, Project $project)
@@ -390,9 +443,10 @@ class ProjectController extends Controller
             'auditor_ids' => 'required|array|min:1',
             'auditor_ids.*' => 'exists:auditors,id',
             'reviewer_id' => 'nullable|exists:users,id',
+            'assigned_manager_id' => 'nullable|exists:users,id',
         ]);
 
-        $project->update([
+        $projectData = [
             'department_id' => $validated['department_id'],
             'assignment_type_id' => $validated['assignment_type_id'],
             'reviewer_id' => $validated['reviewer_id'] ?? null,
@@ -401,7 +455,13 @@ class ProjectController extends Controller
             'start_date' => $validated['start_date'],
             'end_date' => $validated['end_date'],
             'priority' => $validated['priority'],
-        ]);
+        ];
+
+        if ($request->has('assigned_manager_id') && $project->isDraft()) {
+            $projectData['assigned_manager_id'] = $validated['assigned_manager_id'];
+        }
+
+        $project->update($projectData);
 
         // Update assigned auditors
         $project->auditors()->sync($validated['auditor_ids']);

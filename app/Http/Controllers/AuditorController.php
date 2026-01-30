@@ -55,7 +55,7 @@ class AuditorController extends Controller
     {
         $this->authorize('viewAny', Auditor::class);
 
-        $auditors = Auditor::with(['user', 'user.department'])
+        $auditors = Auditor::with(['user'])
             ->withCount([
                 'projects as active_projects_count' => function ($q) {
                     $q->whereIn('status', ['ON_PROGRESS', 'WAITING']);

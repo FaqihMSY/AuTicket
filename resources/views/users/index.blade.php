@@ -27,7 +27,6 @@
                                             <th>Nama</th>
                                             <th>Email</th>
                                             <th>Peran</th>
-                                            <th>Departemen</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
@@ -37,17 +36,11 @@
                                                 <td>{{ $user->name }}</td>
                                                 <td>{{ $user->email }}</td>
                                                 <td>
-                                                    @if($user->role === 'admin')
-                                                        <span class="badge bg-danger">Admin (L1)</span>
-                                                    @elseif($user->role === 'pengawas')
-                                                        <span class="badge bg-primary">Pengawas (L2)</span>
-                                                    @elseif($user->role === 'reviewer')
-                                                        <span class="badge bg-info">Reviewer</span>
-                                                    @else
-                                                        <span class="badge bg-secondary">Staff (L3)</span>
-                                                    @endif
+                                                    <span
+                                                        class="badge {{ user_role_label($user->role) === 'Administrator' ? 'bg-danger' : (user_role_label($user->role) === 'Pengawas' ? 'bg-primary' : (user_role_label($user->role) === 'Reviewer' ? 'bg-info' : 'bg-secondary')) }}">
+                                                        {{ user_role_label($user->role) }}
+                                                    </span>
                                                 </td>
-                                                <td>{{ $user->department?->name ?? 'Semua Departemen' }}</td>
                                                 <td>
                                                     @can('update', $user)
                                                         <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-warning">

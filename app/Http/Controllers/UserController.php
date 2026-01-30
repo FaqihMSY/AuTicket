@@ -16,8 +16,7 @@ class UserController extends Controller
     {
         $this->authorize('viewAny', User::class);
 
-        $users = User::with('department')
-            ->orderByRaw("FIELD(role, 'admin', 'pengawas', 'reviewer', 'staff')")
+        $users = User::orderByRaw("FIELD(role, 'admin', 'pengawas', 'reviewer', 'staff')")
             ->orderBy('name')
             ->get();
 
@@ -27,9 +26,8 @@ class UserController extends Controller
     public function create()
     {
         $this->authorize('create', User::class);
-        $departments = Department::all();
 
-        return view('users.create', compact('departments'));
+        return view('users.create');
     }
 
     public function store(Request $request)
@@ -42,7 +40,6 @@ class UserController extends Controller
             'password' => 'required|min:8|confirmed',
             'role' => 'required|in:admin,pengawas,reviewer,staff',
             'specialization' => 'nullable|string|max:255|required_if:role,staff',
-            'department_id' => 'nullable|exists:departments,id|required_if:role,admin,pengawas',
         ]);
 
         $userData = collect($validated)->except('specialization')->toArray();
@@ -64,9 +61,8 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $this->authorize('update', $user);
-        $departments = Department::all();
 
-        return view('users.edit', compact('user', 'departments'));
+        return view('users.edit', compact('user'));
     }
 
     public function update(Request $request, User $user)
@@ -79,7 +75,6 @@ class UserController extends Controller
             'password' => 'nullable|min:8|confirmed',
             'role' => 'required|in:admin,pengawas,reviewer,staff',
             'specialization' => 'nullable|string|max:255|required_if:role,staff',
-            'department_id' => 'nullable|exists:departments,id|required_if:role,admin,pengawas',
         ]);
 
         $userData = collect($validated)->except('specialization')->toArray();

@@ -52,10 +52,10 @@
     --divider-color: #2a3847;
 
     /* Status Colors - Muted for dark mode */
-    --success: #20c997;
-    --warning: #fd7e14;
-    --danger: #dc3545;
-    --info: #0dcaf0;
+    --success: #0f533f;
+    --warning: #914a11;
+    --danger: #99232e;
+    --info: #0d758a;
 
     /* Shadows */
     --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3);

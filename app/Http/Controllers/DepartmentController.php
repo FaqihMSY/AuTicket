@@ -56,8 +56,8 @@ class DepartmentController extends Controller
 
     public function destroy(Department $department)
     {
-        if ($department->users()->exists() || $department->projects()->exists()) {
-            return back()->with('error', 'Cannot delete department with active users or projects.');
+        if ($department->projects()->exists()) {
+            return back()->with('error', 'Cannot delete department with active projects.');
         }
 
         $department->delete();

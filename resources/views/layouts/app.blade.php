@@ -51,7 +51,12 @@
                         <a class="nav-link" href="{{ route('dashboard') }}">Beranda</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('projects.index') }}">Proyek</a>
+                        <a class="nav-link {{ request()->routeIs('projects.index') ? 'active' : '' }}"
+                            href="{{ route('projects.index') }}">Proyek</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('projects.history') ? 'active' : '' }}"
+                            href="{{ route('projects.history') }}">Riwayat Proyek</a>
                     </li>
                     @if(auth()->user()->canManageProjects())
                         <li class="nav-item">

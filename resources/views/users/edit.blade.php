@@ -78,22 +78,6 @@
                                 @enderror
                             </div>
 
-                            <div class="mb-3" id="departmentField">
-                                <label for="department_id" class="form-label">Departemen</label>
-                                <select class="form-select @error('department_id') is-invalid @enderror" id="department_id"
-                                    name="department_id">
-                                    <option value="">Pilih Departemen</option>
-                                    @foreach($departments as $department)
-                                        <option value="{{ $department->id }}" {{ old('department_id', $user->department_id) == $department->id ? 'selected' : '' }}>
-                                            {{ $department->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('department_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                                <small class="text-muted">Required for Admin and Pengawas roles</small>
-                            </div>
 
                             <!-- Auditor Details (Visible only for Staff) -->
                             <div class="mb-3" id="auditorFields" style="display: none;">
@@ -129,15 +113,12 @@
         document.addEventListener('DOMContentLoaded', function () {
             const roleSelect = document.getElementById('role');
             const auditorFields = document.getElementById('auditorFields');
-            const departmentField = document.getElementById('departmentField');
 
             function toggleFields() {
                 if (roleSelect.value === 'staff') {
                     auditorFields.style.display = 'block';
-                    departmentField.style.display = 'none';
                 } else {
                     auditorFields.style.display = 'none';
-                    departmentField.style.display = 'block';
                 }
             }
 

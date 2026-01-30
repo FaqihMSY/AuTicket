@@ -13,10 +13,6 @@ class Department extends Model
         'description',
     ];
 
-    public function users(): HasMany
-    {
-        return $this->hasMany(User::class);
-    }
 
     public function assignmentTypes(): HasMany
     {

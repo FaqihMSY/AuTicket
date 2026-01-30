@@ -34,16 +34,20 @@
                                 <select name="status" class="form-select">
                                     <option value="">Semua Status</option>
                                     <option value="DRAFT" {{ request('status') == 'DRAFT' ? 'selected' : '' }}>Draf</option>
-                                    <option value="PUBLISHED" {{ request('status') == 'PUBLISHED' ? 'selected' : '' }}>Dipublikasikan</option>
-                                    <option value="ON_PROGRESS" {{ request('status') == 'ON_PROGRESS' ? 'selected' : '' }}>Sedang Berjalan</option>
-                                    <option value="WAITING" {{ request('status') == 'WAITING' ? 'selected' : '' }}>Menunggu Review</option>
-                                    <option value="CLOSED" {{ request('status') == 'CLOSED' ? 'selected' : '' }}>Selesai</option>
+                                    <option value="PUBLISHED" {{ request('status') == 'PUBLISHED' ? 'selected' : '' }}>
+                                        Dipublikasikan</option>
+                                    <option value="ON_PROGRESS" {{ request('status') == 'ON_PROGRESS' ? 'selected' : '' }}>
+                                        Sedang Berjalan</option>
+                                    <option value="WAITING" {{ request('status') == 'WAITING' ? 'selected' : '' }}>Menunggu
+                                        Review</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
                                 <select name="sort" class="form-select">
-                                    <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Terbaru</option>
-                                    <option value="deadline" {{ request('sort') == 'deadline' ? 'selected' : '' }}>Tenggat Terdekat</option>
+                                    <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Terbaru
+                                    </option>
+                                    <option value="deadline" {{ request('sort') == 'deadline' ? 'selected' : '' }}>Tenggat
+                                        Terdekat</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
@@ -152,7 +156,8 @@
                             <input type="file" class="form-control" id="csv_file" name="csv_file" accept=".csv" required>
                         </div>
                         <div class="alert alert-warning small">
-                            <i class="bi bi-exclamation-triangle"></i> Pastikan "Auditor Emails" benar. Email yang tidak valid akan diabaikan.
+                            <i class="bi bi-exclamation-triangle"></i> Pastikan "Auditor Emails" benar. Email yang tidak
+                            valid akan diabaikan.
                         </div>
                     </div>
                     <div class="modal-footer">

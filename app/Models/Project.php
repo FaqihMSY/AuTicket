@@ -145,7 +145,7 @@ class Project extends Model
 
     public function isOverdue(): bool
     {
-        return !$this->isClosed() && $this->end_date->isPast();
+        return !$this->isClosed() && $this->end_date && $this->end_date->isPast();
     }
 
     public function scopeByStatus($query, string $status)
@@ -166,7 +166,7 @@ class Project extends Model
 
     public function isDueSoon(): bool
     {
-        // Warning if not Closed and deadline is coming in <= 3 days (or already passed)
-        return !$this->isClosed() && $this->end_date <= now()->addDays(3);
+        // Red if not Closed and deadline is coming in <= 3 days (including past)
+        return !$this->isClosed() && $this->end_date && $this->end_date <= now()->addDays(3)->endOfDay();
     }
 }
