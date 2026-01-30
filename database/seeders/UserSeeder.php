@@ -10,15 +10,11 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $auditDeptId = DB::table('departments')->where('code', 'AUD')->value('id');
-        $pnaDeptId = DB::table('departments')->where('code', 'PNA')->value('id');
-
         $users = [
             [
                 'name' => 'Super Admin',
                 'email' => 'root@auticket.local',
                 'password' => Hash::make('password'),
-                'department_id' => $auditDeptId,
                 'role' => 'admin',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -27,7 +23,6 @@ class UserSeeder extends Seeder
                 'name' => 'Kepala Bagian Audit',
                 'email' => 'admin.audit@auticket.local',
                 'password' => Hash::make('password'),
-                'department_id' => $auditDeptId,
                 'role' => 'pengawas',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -36,7 +31,6 @@ class UserSeeder extends Seeder
                 'name' => 'Kepala Bagian PNA',
                 'email' => 'admin.pna@auticket.local',
                 'password' => Hash::make('password'),
-                'department_id' => $pnaDeptId,
                 'role' => 'pengawas',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -45,7 +39,6 @@ class UserSeeder extends Seeder
                 'name' => 'Budi Santoso',
                 'email' => 'budi@auticket.local',
                 'password' => Hash::make('password'),
-                'department_id' => null,
                 'role' => 'staff',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -54,7 +47,6 @@ class UserSeeder extends Seeder
                 'name' => 'Sari Wulandari',
                 'email' => 'sari@auticket.local',
                 'password' => Hash::make('password'),
-                'department_id' => null,
                 'role' => 'staff',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -63,7 +55,6 @@ class UserSeeder extends Seeder
                 'name' => 'Anto Wijaya',
                 'email' => 'anto@auticket.local',
                 'password' => Hash::make('password'),
-                'department_id' => null,
                 'role' => 'staff',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -72,7 +63,6 @@ class UserSeeder extends Seeder
                 'name' => 'Dewi Lestari',
                 'email' => 'dewi@auticket.local',
                 'password' => Hash::make('password'),
-                'department_id' => null,
                 'role' => 'staff',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -81,7 +71,6 @@ class UserSeeder extends Seeder
                 'name' => 'Reviewer Audit',
                 'email' => 'reviewer@auticket.local',
                 'password' => Hash::make('password'),
-                'department_id' => $auditDeptId,
                 'role' => 'reviewer',
                 'created_at' => now(),
                 'updated_at' => now(),
