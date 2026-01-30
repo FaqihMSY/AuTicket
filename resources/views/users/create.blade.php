@@ -1,17 +1,17 @@
 @extends('layouts.app')
 
-@section('title', 'Create User')
+@section('title', 'Tambah Pengguna')
 
 @section('content')
     <div class="container-fluid">
         <div class="row mb-4">
             <div class="col-12">
-                <h2>Create New User</h2>
+                <h2>Tambah Pengguna Baru</h2>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('users.index') }}">Users</a></li>
-                        <li class="breadcrumb-item active">Create</li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Beranda</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('users.index') }}">Pengguna</a></li>
+                        <li class="breadcrumb-item active">Tambah</li>
                     </ol>
                 </nav>
             </div>
@@ -25,7 +25,7 @@
                             @csrf
 
                             <div class="mb-3">
-                                <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+                                <label for="name" class="form-label">Nama <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
                                     name="name" value="{{ old('name') }}" required>
                                 @error('name')
@@ -52,17 +52,17 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="password_confirmation" class="form-label">Confirm Password <span
+                                <label for="password_confirmation" class="form-label">Konfirmasi Kata Sandi <span
                                         class="text-danger">*</span></label>
                                 <input type="password" class="form-control" id="password_confirmation"
                                     name="password_confirmation" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="role" class="form-label">Role <span class="text-danger">*</span></label>
+                                <label for="role" class="form-label">Peran <span class="text-danger">*</span></label>
                                 <select class="form-select @error('role') is-invalid @enderror" id="role" name="role"
                                     required>
-                                    <option value="">Select Role</option>
+                                    <option value="">Pilih Peran</option>
                                     <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin (Level 1)
                                     </option>
                                     <option value="pengawas" {{ old('role') === 'pengawas' ? 'selected' : '' }}>Pengawas
@@ -78,10 +78,10 @@
                             </div>
 
                             <div class="mb-3" id="departmentField">
-                                <label for="department_id" class="form-label">Department</label>
+                                <label for="department_id" class="form-label">Departemen</label>
                                 <select class="form-select @error('department_id') is-invalid @enderror" id="department_id"
                                     name="department_id">
-                                    <option value="">Select Department</option>
+                                    <option value="">Pilih Departemen</option>
                                     @foreach($departments as $department)
                                         <option value="{{ $department->id }}" {{ old('department_id') == $department->id ? 'selected' : '' }}>
                                             {{ $department->name }}
@@ -91,16 +91,16 @@
                                 @error('department_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <small class="text-muted">Required for Admin and Pengawas roles</small>
+                                <small class="text-muted">Wajib untuk peran Admin dan Pengawas</small>
                             </div>
 
                             <!-- Auditor Details (Visible only for Staff) -->
                             <div class="mb-3" id="auditorFields" style="display: none;">
-                                <label for="specialization" class="form-label">Specialization</label>
+                                <label for="specialization" class="form-label">Spesialisasi</label>
                                 <input type="text" class="form-control @error('specialization') is-invalid @enderror"
                                     id="specialization" name="specialization" value="{{ old('specialization') }}"
-                                    placeholder="e.g. IT Audit, Financial">
-                                <small class="text-muted">Required for Staff role</small>
+                                    placeholder="misal: Audit TI, Keuangan">
+                                <small class="text-muted">Wajib untuk peran Staff</small>
                                 @error('specialization')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -109,10 +109,10 @@
                             <hr>
 
                             <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-save"></i> Create User
+                                <i class="bi bi-save"></i> Tambah Pengguna
                             </button>
                             <a href="{{ route('users.index') }}" class="btn btn-secondary">
-                                <i class="bi bi-x-circle"></i> Cancel
+                                <i class="bi bi-x-circle"></i> Batal
                             </a>
                         </form>
                     </div>

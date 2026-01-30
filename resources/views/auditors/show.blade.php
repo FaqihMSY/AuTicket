@@ -4,7 +4,7 @@
     <div class="container-fluid">
         <div class="mb-3">
             <a href="{{ route('auditors.index') }}" class="btn btn-sm btn-outline-secondary">
-                ← Back to List
+                ← Kembali ke Daftar
             </a>
         </div>
 
@@ -23,7 +23,7 @@
                     <div class="col-md-3 text-end">
                         <div class="mb-1">
                             <h1 class="mb-0">{{ number_format($auditor->performance_score, 0) }}</h1>
-                            <small class="text-muted">Performance Score</small>
+                            <small class="text-muted">Skor Kinerja</small>
                         </div>
                         <span class="badge {{ $auditor->getWorkloadColorClass() }}">
                             {{ $auditor->getWorkloadLabel() }} ({{ $auditor->getWorkloadScore() }})
@@ -39,7 +39,7 @@
                 <div class="card">
                     <div class="card-body text-center">
                         <h2 class="mb-0">{{ $stats['total_projects'] }}</h2>
-                        <small class="text-muted">Total Projects</small>
+                        <small class="text-muted">Total Proyek</small>
                     </div>
                 </div>
             </div>
@@ -47,7 +47,7 @@
                 <div class="card">
                     <div class="card-body text-center">
                         <h2 class="mb-0">{{ number_format($stats['completion_rate'], 0) }}%</h2>
-                        <small class="text-muted">Completion Rate</small>
+                        <small class="text-muted">Tingkat Penyelesaian</small>
                     </div>
                 </div>
             </div>
@@ -55,7 +55,7 @@
                 <div class="card">
                     <div class="card-body text-center">
                         <h2 class="mb-0">{{ number_format($stats['on_time_rate'], 0) }}%</h2>
-                        <small class="text-muted">On-Time Rate</small>
+                        <small class="text-muted">Ketepatan Waktu</small>
                     </div>
                 </div>
             </div>
@@ -63,7 +63,7 @@
                 <div class="card">
                     <div class="card-body text-center">
                         <h2 class="mb-0">{{ number_format($stats['average_completion_days'], 0) }}</h2>
-                        <small class="text-muted">Avg Days</small>
+                        <small class="text-muted">Rata-rata Hari</small>
                     </div>
                 </div>
             </div>
@@ -74,7 +74,7 @@
             <div class="col-md-4">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h6 class="card-title text-muted mb-3">Completed by Type</h6>
+                        <h6 class="card-title text-muted mb-3">Selesai Berdasarkan Jenis</h6>
                         @if(count($stats['project_type_breakdown']) > 0)
                             <table class="table table-sm table-borderless">
                                 <tbody>
@@ -93,7 +93,7 @@
                                 </tfoot>
                             </table>
                         @else
-                            <p class="text-muted text-center py-3 mb-0">No completed projects</p>
+                            <p class="text-muted text-center py-3 mb-0">Belum ada proyek yang selesai</p>
                         @endif
                     </div>
                 </div>
@@ -101,7 +101,7 @@
             <div class="col-md-8">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h6 class="card-title text-muted mb-3">Performance Trend (6 Months)</h6>
+                        <h6 class="card-title text-muted mb-3">Tren Kinerja (6 Bulan)</h6>
                         <div style="height: 250px;">
                             <canvas id="performanceTrendChart"></canvas>
                         </div>
@@ -115,7 +115,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <h6 class="card-title text-muted mb-3">Rating Breakdown</h6>
+                        <h6 class="card-title text-muted mb-3">Rincian Penilaian</h6>
                         <div style="height: 200px;">
                             <canvas id="ratingBreakdownChart"></canvas>
                         </div>
@@ -127,19 +127,19 @@
         <!-- Review History -->
         <div class="card">
             <div class="card-body">
-                <h6 class="card-title text-muted mb-3">Review History</h6>
+                <h6 class="card-title text-muted mb-3">Riwayat Review</h6>
                 <div class="table-responsive">
                     <table class="table table-sm table-hover">
                         <thead class="table-light">
                             <tr>
-                                <th>Project</th>
-                                <th>Date</th>
-                                <th class="text-center">Overall</th>
-                                <th class="text-center">Timeliness</th>
-                                <th class="text-center">Completeness</th>
-                                <th class="text-center">Quality</th>
-                                <th class="text-center">Communication</th>
-                                <th>Feedback</th>
+                                <th>Proyek</th>
+                                <th>Tanggal</th>
+                                <th class="text-center">Keseluruhan</th>
+                                <th class="text-center">Ketepatan Waktu</th>
+                                <th class="text-center">Kelengkapan</th>
+                                <th class="text-center">Kualitas</th>
+                                <th class="text-center">Komunikasi</th>
+                                <th>Umpan Balik</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -151,7 +151,7 @@
                                                 {{ $review->project->title }}
                                             </a>
                                         @else
-                                            <span class="text-muted">[Deleted Project]</span>
+                                            <span class="text-muted">[Proyek Dihapus]</span>
                                         @endif
                                     </td>
                                     <td><small class="text-muted">{{ $review->created_at->format('d M Y') }}</small></td>
@@ -169,7 +169,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center text-muted py-3">No reviews yet</td>
+                                    <td colspan="8" class="text-center text-muted py-3">Belum ada review</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -197,7 +197,7 @@
                 data: {
                     labels: data.map(item => item.month),
                     datasets: [{
-                        label: 'Performance Score',
+                        label: 'Skor Kinerja',
                         data: data.map(item => item.score),
                         borderColor: '#0d6efd',
                         backgroundColor: 'rgba(13, 110, 253, 0.05)',
@@ -239,7 +239,7 @@
                             padding: 10,
                             callbacks: {
                                 label: function (context) {
-                                    return 'Score: ' + (context.parsed.y || 'No data');
+                                    return 'Skor: ' + (context.parsed.y || 'Tidak ada data');
                                 }
                             }
                         }
@@ -254,9 +254,9 @@
             new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['Timeliness', 'Completeness', 'Quality', 'Communication'],
+                    labels: ['Ketepatan Waktu', 'Kelengkapan', 'Kualitas', 'Komunikasi'],
                     datasets: [{
-                        label: 'Average Rating',
+                        label: 'Rata-rata Nilai',
                         data: [
                             data.timeliness,
                             data.completeness,
@@ -294,7 +294,7 @@
                             padding: 10,
                             callbacks: {
                                 label: function (context) {
-                                    return 'Rating: ' + context.parsed.x;
+                                    return 'Nilai: ' + context.parsed.x;
                                 }
                             }
                         }

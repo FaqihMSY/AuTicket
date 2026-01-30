@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - AuTicket</title>
+    <title>Masuk - AuTicket</title>
     <link rel="icon" href="{{ asset('img/logo.png') }}" type="image/png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/theme.css') }}">
@@ -34,7 +34,7 @@
                             <img src="{{ asset('img/logo.png') }}" alt="AuTicket Logo"
                                 style="max-height: 80px; width: auto;" class="mb-3">
                             <h3>AuTicket</h3>
-                            <p class="text-muted">Audit Ticketing System</p>
+                            <p class="text-muted">Sistem Tiket Audit</p>
                         </div>
 
                         @if(session('status'))
@@ -56,7 +56,7 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
+                                <label for="password" class="form-label">Kata Sandi</label>
                                 <input type="password" class="form-control @error('password') is-invalid @enderror"
                                     id="password" name="password" required>
                                 @error('password')
@@ -66,10 +66,10 @@
 
                             <div class="mb-3 form-check">
                                 <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                                <label class="form-check-label" for="remember">Remember me</label>
+                                <label class="form-check-label" for="remember">Ingat saya</label>
                             </div>
 
-                            <button type="submit" class="btn btn-primary w-100">Login</button>
+                            <button type="submit" class="btn btn-primary w-100">Masuk</button>
                         </form>
                     </div>
                 </div>

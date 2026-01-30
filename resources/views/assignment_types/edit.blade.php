@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Assignment Type')
+@section('title', 'Ubah Jenis Penugasan')
 
 @section('content')
     <div class="container-fluid">
@@ -8,7 +8,7 @@
             <div class="col-md-8">
                 <div class="card shadow-sm">
                     <div class="card-header bg-white py-3">
-                        <h5 class="mb-0">Edit Assignment Type: {{ $assignmentType->name }}</h5>
+                        <h5 class="mb-0">Ubah Jenis Penugasan: {{ $assignmentType->name }}</h5>
                     </div>
                     <div class="card-body p-4">
                         <form action="{{ route('assignment-types.update', $assignmentType) }}" method="POST">
@@ -16,7 +16,7 @@
                             @method('PUT')
 
                             <div class="mb-3">
-                                <label for="name" class="form-label">Type Name <span class="text-danger">*</span></label>
+                                <label for="name" class="form-label">Nama Jenis <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
                                     name="name" value="{{ old('name', $assignmentType->name) }}" required>
                                 @error('name')
@@ -25,7 +25,7 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="code" class="form-label">Code <span class="text-danger">*</span></label>
+                                <label for="code" class="form-label">Kode <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('code') is-invalid @enderror" id="code"
                                     name="code" value="{{ old('code', $assignmentType->code) }}" required>
                                 @error('code')
@@ -34,11 +34,11 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="department_id" class="form-label">Department <span
+                                <label for="department_id" class="form-label">Departemen <span
                                         class="text-danger">*</span></label>
                                 <select class="form-select @error('department_id') is-invalid @enderror" id="department_id"
                                     name="department_id" required>
-                                    <option value="">Select Department</option>
+                                    <option value="">Pilih Departemen</option>
                                     @foreach($departments as $dept)
                                         <option value="{{ $dept->id }}" {{ old('department_id', $assignmentType->department_id) == $dept->id ? 'selected' : '' }}>
                                             {{ $dept->name }} ({{ $dept->code }})
@@ -51,7 +51,7 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
+                                <label for="description" class="form-label">Deskripsi</label>
                                 <textarea class="form-control @error('description') is-invalid @enderror" id="description"
                                     name="description"
                                     rows="3">{{ old('description', $assignmentType->description) }}</textarea>
@@ -61,8 +61,8 @@
                             </div>
 
                             <div class="d-flex justify-content-end gap-2">
-                                <a href="{{ route('assignment-types.index') }}" class="btn btn-secondary">Cancel</a>
-                                <button type="submit" class="btn btn-primary">Update Assignment Type</button>
+                                <a href="{{ route('assignment-types.index') }}" class="btn btn-secondary">Batal</a>
+                                <button type="submit" class="btn btn-primary">Perbarui Jenis Penugasan</button>
                             </div>
                         </form>
                     </div>

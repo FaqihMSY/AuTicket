@@ -1,22 +1,22 @@
 @extends('layouts.app')
 
-@section('title', 'Create Project')
+@section('title', 'Buat Proyek')
 
 @section('content')
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2>Create New Project</h2>
-                <p class="text-muted">Create a new audit project and assign auditors.</p>
+                <h2>Buat Proyek Baru</h2>
+                <p class="text-muted">Buat proyek audit baru dan tugaskan auditor.</p>
                 @if(auth()->user()->isAuditor() && !auth()->user()->canManageProjects())
                     <div class="alert alert-warning d-inline-block py-2 px-3 mb-0">
                         <i class="bi bi-info-circle me-2"></i>
-                        <strong>Draft Mode:</strong> Your project will be saved as a Draft and requires Manager approval.
+                        <strong>Mode Draf:</strong> Proyek Anda akan disimpan sebagai Draf dan memerlukan persetujuan Manajer.
                     </div>
                 @endif
             </div>
             <a href="{{ url()->previous() }}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left me-1"></i> Back
+                <i class="bi bi-arrow-left me-1"></i> Kembali
             </a>
         </div>
 
@@ -24,7 +24,7 @@
             <div class="col-lg-8">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Project Information</h5>
+                        <h5 class="mb-0">Informasi Proyek</h5>
                     </div>
                     <div class="card-body">
                         <form method="POST" action="{{ route('projects.store') }}" enctype="multipart/form-data"
@@ -33,7 +33,7 @@
 
                             <!-- Title -->
                             <div class="mb-3">
-                                <label for="title" class="form-label">Project Title <span
+                                <label for="title" class="form-label">Judul Proyek <span
                                         class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('title') is-invalid @enderror" id="title"
                                     name="title" value="{{ old('title') }}" required>
@@ -44,11 +44,11 @@
 
                             <!-- Assignment Type -->
                             <div class="mb-3">
-                                <label for="assignment_type_id" class="form-label">Assignment Type <span
+                                <label for="assignment_type_id" class="form-label">Jenis Penugasan <span
                                         class="text-danger">*</span></label>
                                 <select class="form-select @error('assignment_type_id') is-invalid @enderror"
                                     id="assignment_type_id" name="assignment_type_id" required>
-                                    <option value="">Select Assignment Type</option>
+                                    <option value="">Pilih Jenis Penugasan</option>
                                     @foreach($assignmentTypes as $type)
                                         <option value="{{ $type->id }}" {{ old('assignment_type_id') == $type->id ? 'selected' : '' }}>
                                             {{ $type->name }} - {{ $type->description }}
@@ -61,11 +61,11 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="department_id" class="form-label">Department <span
+                                <label for="department_id" class="form-label">Departemen <span
                                         class="text-danger">*</span></label>
                                 <select class="form-select @error('department_id') is-invalid @enderror"
                                     id="department_id" name="department_id" required>
-                                    <option value="">Select Department</option>
+                                    <option value="">Pilih Departemen</option>
                                     @foreach($departments as $dept)
                                         <option value="{{ $dept->id }}" {{ old('department_id') == $dept->id ? 'selected' : '' }}>
                                             {{ $dept->name }}
@@ -80,7 +80,7 @@
                             <!-- Dates -->
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="start_date" class="form-label">Start Date <span
+                                    <label for="start_date" class="form-label">Tanggal Mulai <span
                                             class="text-danger">*</span></label>
                                     <input type="date" class="form-control @error('start_date') is-invalid @enderror"
                                         id="start_date" name="start_date" value="{{ old('start_date', date('Y-m-d')) }}"
@@ -90,7 +90,7 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="end_date" class="form-label">End Date <span
+                                    <label for="end_date" class="form-label">Tanggal Selesai <span
                                             class="text-danger">*</span></label>
                                     <input type="date" class="form-control @error('end_date') is-invalid @enderror"
                                         id="end_date" name="end_date" value="{{ old('end_date') }}" required>
@@ -102,13 +102,13 @@
 
                             <!-- Priority -->
                             <div class="mb-3">
-                                <label for="priority" class="form-label">Priority <span class="text-danger">*</span></label>
+                                <label for="priority" class="form-label">Prioritas <span class="text-danger">*</span></label>
                                 <select class="form-select @error('priority') is-invalid @enderror" id="priority"
                                     name="priority" required>
-                                    <option value="LOW" {{ old('priority') == 'LOW' ? 'selected' : '' }}>Low</option>
+                                    <option value="LOW" {{ old('priority') == 'LOW' ? 'selected' : '' }}>Rendah</option>
                                     <option value="MEDIUM" {{ old('priority', 'MEDIUM') == 'MEDIUM' ? 'selected' : '' }}>
-                                        Medium</option>
-                                    <option value="HIGH" {{ old('priority') == 'HIGH' ? 'selected' : '' }}>High</option>
+                                        Sedang</option>
+                                    <option value="HIGH" {{ old('priority') == 'HIGH' ? 'selected' : '' }}>Tinggi</option>
                                 </select>
                                 @error('priority')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -117,7 +117,7 @@
 
                             <!-- Description -->
                             <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
+                                <label for="description" class="form-label">Deskripsi</label>
                                 <textarea class="form-control @error('description') is-invalid @enderror" id="description"
                                     name="description" rows="4">{{ old('description') }}</textarea>
                                 @error('description')
@@ -127,13 +127,11 @@
 
                             <!-- Instruction Files -->
                             <div class="mb-3">
-                                <label for="instruction_files" class="form-label">Instruction Files (PDF/Excel/Word, max
-                                    10MB each)</label>
+                                <label for="instruction_files" class="form-label">File Instruksi (PDF/Excel/Word, maks 10MB per file)</label>
                                 <input type="file" class="form-control @error('instruction_files.*') is-invalid @enderror"
                                     id="instruction_files" name="instruction_files[]" accept=".pdf,.xlsx,.xls,.doc,.docx"
                                     multiple>
-                                <small class="text-muted">Optional: Upload instruction documents for auditors (multiple
-                                    files allowed)</small>
+                                <small class="text-muted">Opsional: Unggah dokumen instruksi untuk auditor (bisa banyak file)</small>
                                 @error('instruction_files.*')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -141,15 +139,15 @@
 
                             <!-- Auditor Selection -->
                             <div class="mb-4">
-                                <label class="form-label">Assign Auditors <span class="text-danger">*</span></label>
+                                <label class="form-label">Tugaskan Auditor <span class="text-danger">*</span></label>
 
                                 <!-- Sort Options -->
                                 <div class="mb-3">
-                                    <label for="sortBy" class="form-label">Sort by:</label>
+                                    <label for="sortBy" class="form-label">Urutkan berdasarkan:</label>
                                     <select class="form-select form-select-sm" id="sortBy" style="width: 200px;">
-                                        <option value="performance">Performance</option>
-                                        <option value="availability">Availability</option>
-                                        <option value="balanced">Balanced</option>
+                                        <option value="performance">Kinerja</option>
+                                        <option value="availability">Ketersediaan</option>
+                                        <option value="balanced">Seimbang</option>
                                     </select>
                                 </div>
 
@@ -158,9 +156,9 @@
                                      data-current-auditor-id="{{ auth()->user()->isAuditor() ? auth()->user()->auditor->id : '' }}">
                                     <div class="text-center">
                                         <div class="spinner-border spinner-border-sm" role="status">
-                                            <span class="visually-hidden">Loading...</span>
+                                            <span class="visually-hidden">Memuat...</span>
                                         </div>
-                                        <p class="mb-0 mt-2">Loading auditors...</p>
+                                        <p class="mb-0 mt-2">Memuat auditor...</p>
                                     </div>
                                 </div>
 
@@ -176,13 +174,13 @@
                             @if(auth()->user()->isAuditor())
                                 <div class="mb-4">
                                     <label for="assigned_manager_id" class="form-label">
-                                        Assign to Manager <span class="text-danger">*</span>
+                                        Tugaskan ke Manajer <span class="text-danger">*</span>
                                         <i class="bi bi-info-circle text-muted" data-bs-toggle="tooltip" 
-                                           title="Select the manager who will approve and publish this project"></i>
+                                           title="Pilih manajer yang akan menyetujui dan mempublikasikan proyek ini"></i>
                                     </label>
                                     <select class="form-select @error('assigned_manager_id') is-invalid @enderror" 
                                             id="assigned_manager_id" name="assigned_manager_id" required>
-                                        <option value="">Choose a manager...</option>
+                                        <option value="">Pilih manajer...</option>
                                         @foreach($managers as $manager)
                                             <option value="{{ $manager->id }}" {{ old('assigned_manager_id') == $manager->id ? 'selected' : '' }}>
                                                 {{ $manager->name }} ({{ ucfirst($manager->role) }})
@@ -190,7 +188,7 @@
                                         @endforeach
                                     </select>
                                     <small class="text-muted">
-                                        This manager will review and approve your draft project
+                                        Manajer ini akan mereview dan menyetujui draf proyek Anda
                                     </small>
                                     @error('assigned_manager_id')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -202,13 +200,13 @@
                             @if(auth()->user()->canManageProjects())
                                 <div class="mb-4">
                                     <label for="reviewer_id" class="form-label">
-                                        Assign Reviewer (Optional)
+                                        Tunjuk Reviewer (Opsional)
                                         <i class="bi bi-info-circle text-muted" data-bs-toggle="tooltip" 
-                                           title="If assigned, this reviewer can close the project after review"></i>
+                                           title="Jika ditunjuk, reviewer ini dapat menutup proyek setelah direview"></i>
                                     </label>
                                     <select class="form-select @error('reviewer_id') is-invalid @enderror" 
                                             id="reviewer_id" name="reviewer_id">
-                                        <option value="">No reviewer needed</option>
+                                        <option value="">Tidak butuh reviewer</option>
                                         @foreach($reviewers as $reviewer)
                                             <option value="{{ $reviewer->id }}" {{ old('reviewer_id') == $reviewer->id ? 'selected' : '' }}>
                                                 {{ $reviewer->name }} ({{ $reviewer->email }})
@@ -216,7 +214,7 @@
                                         @endforeach
                                     </select>
                                     <small class="text-muted">
-                                        Reviewer can be assigned now or later when project status is WAITING
+                                        Reviewer dapat ditunjuk sekarang atau nanti saat status proyek MENUNGGU REVIEW
                                     </small>
                                     @error('reviewer_id')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -227,9 +225,9 @@
                             <!-- Submit Buttons -->
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-save"></i> Create Project
+                                    <i class="bi bi-save"></i> Tambah Proyek
                                 </button>
-                                <a href="{{ route('projects.index') }}" class="btn btn-secondary">Cancel</a>
+                                <a href="{{ route('projects.index') }}" class="btn btn-secondary">Batal</a>
                             </div>
                         </form>
                     </div>
@@ -240,27 +238,27 @@
             <div class="col-lg-4">
                 <div class="card">
                     <div class="card-header">
-                        <h6 class="mb-0">Help</h6>
+                        <h6 class="mb-0">Bantuan</h6>
                     </div>
                     <div class="card-body">
-                        <h6>Workload Indicators:</h6>
+                        <h6>Indikator Beban Kerja:</h6>
                         <ul class="list-unstyled">
-                            <li><span class="badge workload-0">0</span> Available</li>
-                            <li><span class="badge workload-1">1</span> Very Light</li>
-                            <li><span class="badge workload-2">2</span> Light</li>
-                            <li><span class="badge workload-3">3</span> Moderate</li>
-                            <li><span class="badge workload-4">4</span> Heavy</li>
-                            <li><span class="badge workload-5">5+</span> Full/Busy</li>
+                            <li><span class="badge workload-0">0</span> Tersedia</li>
+                            <li><span class="badge workload-1">1</span> Sangat Ringan</li>
+                            <li><span class="badge workload-2">2</span> Ringan</li>
+                            <li><span class="badge workload-3">3</span> Sedang</li>
+                            <li><span class="badge workload-4">4</span> Berat</li>
+                            <li><span class="badge workload-5">5+</span> Penuh/Sibuk</li>
                         </ul>
 
                         <hr>
 
                         <h6>Tips:</h6>
                         <ul class="small">
-                            <li>Select at least one auditor</li>
-                            <li>Consider workload when assigning</li>
-                            <li>Higher performance scores indicate better past performance</li>
-                            <li>Project will be saved as DRAFT until published</li>
+                            <li>Pilih minimal satu auditor</li>
+                            <li>Pertimbangkan beban kerja saat menugaskan</li>
+                            <li>Skor kinerja yang lebih tinggi menunjukkan kinerja masa lalu yang lebih baik</li>
+                            <li>Proyek akan disimpan sebagai DRAF sampai dipublikasikan</li>
                         </ul>
                     </div>
                 </div>
@@ -283,7 +281,7 @@
 
             endDate.addEventListener('change', function () {
                 if (this.value < startDate.value) {
-                    alert('End date cannot be before start date');
+                    alert('Tanggal selesai tidak boleh sebelum tanggal mulai');
                     this.value = '';
                 }
             });

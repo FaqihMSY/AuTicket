@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Project Detail')
+@section('title', 'Detail Proyek')
 
 @section('content')
     <div class="container-fluid">
@@ -9,24 +9,16 @@
                 <h2>{{ $project->title }}</h2>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('projects.index') }}">Projects</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Beranda</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('projects.index') }}">Proyek</a></li>
                         <li class="breadcrumb-item active">{{ $project->title }}</li>
                     </ol>
                 </nav>
             </div>
             <div class="col-md-4 text-end">
-                @if($project->status === 'DRAFT')
-                    <span class="badge bg-secondary fs-5">DRAFT</span>
-                @elseif($project->status === 'PUBLISHED')
-                    <span class="badge bg-info fs-5">PUBLISHED</span>
-                @elseif($project->status === 'ON_PROGRESS')
-                    <span class="badge bg-primary fs-5">ON PROGRESS</span>
-                @elseif($project->status === 'WAITING')
-                    <span class="badge bg-warning fs-5">WAITING APPROVAL</span>
-                @else
-                    <span class="badge bg-success fs-5">CLOSED</span>
-                @endif
+                <span class="badge {{ project_status_badge_class($project->status) }} fs-5">
+                    {{ strtoupper(project_status_label($project->status)) }}
+                </span>
             </div>
         </div>
 
@@ -36,87 +28,81 @@
                 <!-- Project Information -->
                 <div class="card mb-3">
                     <div class="card-header">
-                        <h5 class="mb-0">Project Information</h5>
+                        <h5 class="mb-0">Informasi Proyek</h5>
                     </div>
                     <div class="card-body">
                         <table class="table table-borderless">
                             <tr>
-                                <th width="200">Assignment Type:</th>
+                                <th width="200">Jenis Penugasan:</th>
                                 <td>{{ $project->assignmentType->name }}</td>
                             </tr>
                             <tr>
-                                <th>Priority:</th>
+                                <th>Prioritas:</th>
                                 <td>
-                                    @if($project->priority === 'HIGH')
-                                        <span class="badge bg-danger">High</span>
-                                    @elseif($project->priority === 'MEDIUM')
-                                        <span class="badge bg-warning">Medium</span>
-                                    @else
-                                        <span class="badge bg-info">Low</span>
-                                    @endif
+                                    <span class="badge {{ project_priority_badge_class($project->priority) }}">
+                                        {{ project_priority_label($project->priority) }}
+                                    </span>
                                 </td>
                             </tr>
                             <tr>
-                                <th>Start Date:</th>
+                                <th>Tanggal Mulai:</th>
                                 <td>{{ \Carbon\Carbon::parse($project->start_date)->format('d M Y') }}</td>
                             </tr>
                             <tr>
-                                <th>End Date:</th>
+                                <th>Tanggal Selesai:</th>
                                 <td>{{ \Carbon\Carbon::parse($project->end_date)->format('d M Y') }}</td>
                             </tr>
                             <tr>
-                                <th>Created By:</th>
+                                <th>Dibuat Oleh:</th>
                                 <td>
                                     <strong>{{ $project->creator->name }}</strong>
-                                    ({{ $project->creator->department?->name ?? 'All Departments' }})
                                     @if(auth()->id() === $project->created_by)
-                                        <span class="badge bg-info">You</span>
+                                        <span class="badge bg-info">Anda</span>
                                     @endif
                                 </td>
                             </tr>
                             <tr>
-                                <th>Created At:</th>
+                                <th>Dibuat Pada:</th>
                                 <td>{{ $project->created_at->format('d M Y H:i') }}</td>
                             </tr>
                             @if($project->status === 'DRAFT' && $project->assigned_manager_id)
                                 <tr>
-                                    <th>Assigned to Manager:</th>
+                                    <th>Ditugaskan ke Manajer:</th>
                                     <td>
                                         <strong>{{ $project->assignedManager->name }}</strong>
-                                        ({{ ucfirst($project->assignedManager->role) }})
+                                        ({{ user_role_label($project->assignedManager->role) }})
                                         @if(auth()->id() === $project->assigned_manager_id)
-                                            <span class="badge bg-warning">Waiting for your approval</span>
+                                            <span class="badge bg-warning">Menunggu persetujuan Anda</span>
                                         @endif
                                         <br>
-                                        <small class="text-muted">Will approve and publish this project</small>
+                                        <small class="text-muted">Akan menyetujui dan mempublikasikan proyek ini</small>
                                     </td>
                                 </tr>
                             @endif
                             @if($project->published_by)
                                 <tr>
-                                    <th>Published By:</th>
+                                    <th>Dipublikasikan Oleh:</th>
                                     <td>
                                         <strong>{{ $project->publisher->name }}</strong>
-                                        ({{ $project->publisher->department?->name ?? 'All Departments' }})
                                         @if(auth()->id() === $project->published_by)
-                                            <span class="badge bg-success">You</span>
+                                            <span class="badge bg-success">Anda</span>
                                         @endif
                                         <br>
-                                        <small class="text-muted">on {{ $project->published_at->format('d M Y H:i') }}</small>
+                                        <small class="text-muted">pada {{ $project->published_at->format('d M Y H:i') }}</small>
                                     </td>
                                 </tr>
                             @endif
                             @if($project->reviewer_id)
                                 <tr>
-                                    <th>Assigned Reviewer:</th>
+                                    <th>Reviewer yang Ditunjuk:</th>
                                     <td>
                                         <strong>{{ $project->reviewer->name }}</strong>
                                         ({{ $project->reviewer->email }})
                                         @if(auth()->id() === $project->reviewer_id)
-                                            <span class="badge bg-info">You</span>
+                                            <span class="badge bg-info">Anda</span>
                                         @endif
                                         <br>
-                                        <small class="text-muted">Can review and close this project</small>
+                                        <small class="text-muted">Dapat mereview dan menutup proyek ini</small>
                                     </td>
                                 </tr>
                             @endif
@@ -124,7 +110,7 @@
 
                         @if($project->description)
                             <hr>
-                            <h6>Description:</h6>
+                            <h6>Deskripsi::</h6>
                             <p>{{ $project->description }}</p>
                         @endif
                     </div>
@@ -133,17 +119,17 @@
                 <!-- Assigned Auditors -->
                 <div class="card mb-3">
                     <div class="card-header">
-                        <h5 class="mb-0">Assigned Auditors</h5>
+                        <h5 class="mb-0">Auditor yang Ditugaskan</h5>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Specialization</th>
+                                        <th>Nama</th>
+                                        <th>Spesialisasi</th>
                                         @if(auth()->user()->canManageProjects())
-                                            <th>Performance Score</th>
+                                            <th>Skor Kinerja</th>
                                         @endif
                                     </tr>
                                 </thead>
@@ -168,7 +154,7 @@
                 <!-- File Attachments -->
                 <div class="card mb-3">
                     <div class="card-header">
-                        <h5 class="mb-0">File Attachments</h5>
+                        <h5 class="mb-0">Lampiran File</h5>
                     </div>
                     <div class="card-body">
                         @if($project->attachments->count() > 0)
@@ -176,11 +162,11 @@
                                 <table class="table table-sm">
                                     <thead>
                                         <tr>
-                                            <th>File Name</th>
-                                            <th>Type</th>
-                                            <th>Uploaded By</th>
-                                            <th>Date</th>
-                                            <th>Action</th>
+                                            <th>Nama File</th>
+                                            <th>Tipe</th>
+                                            <th>Diunggah Oleh</th>
+                                            <th>Tanggal</th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -189,9 +175,9 @@
                                                 <td>{{ $attachment->original_filename }}</td>
                                                 <td>
                                                     @if($attachment->category === 'INSTRUCTION')
-                                                        <span class="badge bg-info">Instruction</span>
+                                                        <span class="badge bg-info">Instruksi</span>
                                                     @else
-                                                        <span class="badge bg-success">Result</span>
+                                                        <span class="badge bg-success">Hasil</span>
                                                     @endif
                                                 </td>
                                                 <td>{{ $attachment->uploader->name }}</td>
@@ -199,16 +185,16 @@
                                                 <td>
                                                     <a href="{{ route('attachments.download', $attachment) }}"
                                                         class="btn btn-sm btn-primary me-1">
-                                                        <i class="bi bi-download"></i> Download
+                                                        <i class="bi bi-download"></i> Unduh
                                                     </a>
                                                     @can('delete', $attachment)
                                                         <form action="{{ route('attachments.destroy', $attachment) }}" method="POST"
-                                                            onsubmit="return confirm('Are you sure you want to delete this file?');"
+                                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus file ini?');"
                                                             class="d-inline">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="btn btn-sm btn-danger">
-                                                                <i class="bi bi-trash"></i> Delete
+                                                                <i class="bi bi-trash"></i> Hapus
                                                             </button>
                                                         </form>
                                                     @endcan
@@ -219,7 +205,7 @@
                                 </table>
                             </div>
                         @else
-                            <p class="text-muted mb-0">No files attached yet.</p>
+                            <p class="text-muted mb-0">Belum ada file yang dilampirkan.</p>
                         @endif
                     </div>
                 </div>
@@ -229,19 +215,20 @@
                 @if($project->status === 'ON_PROGRESS' && auth()->user()->isAuditor() && $project->auditors->contains('user_id', auth()->id()))
                     <div class="card mb-3 border-primary">
                         <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0">Upload Work Papers / Attachments</h5>
+                            <h5 class="mb-0">Unggah Kertas Kerja / Lampiran</h5>
                         </div>
                         <div class="card-body">
                             <p class="text-muted small mb-3">
-                                <i class="bi bi-info-circle"></i> Files uploaded here are immediately visible to Managers.
-                                Uploading files <strong>does not</strong> automatically submit the project.
+                                <i class="bi bi-info-circle"></i> File yang diunggah di sini akan langsung dapat dilihat oleh
+                                Manajer.
+                                Mengunggah file <strong>tidak</strong> secara otomatis mengirimkan (submit) proyek.
                             </p>
                             <form method="POST" action="{{ route('projects.uploadResult', $project) }}"
                                 enctype="multipart/form-data">
                                 @csrf
                                 <div class="mb-3">
-                                    <label for="result_files" class="form-label">Select Files (PDF/Excel/Word, max 10MB
-                                        each)</label>
+                                    <label for="result_files" class="form-label">Pilih File (PDF/Excel/Word, maks 10MB per
+                                        file)</label>
                                     <input type="file" class="form-control @error('result_files.*') is-invalid @enderror"
                                         id="result_files" name="result_files[]" accept=".pdf,.xlsx,.xls,.doc,.docx" multiple
                                         required>
@@ -250,7 +237,7 @@
                                     @enderror
                                 </div>
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-upload"></i> Upload Files
+                                    <i class="bi bi-upload"></i> Unggah File
                                 </button>
                             </form>
                         </div>
@@ -263,12 +250,12 @@
                 <!-- Workflow Actions -->
                 <div class="card mb-3">
                     <div class="card-header">
-                        <h6 class="mb-0">Actions</h6>
+                        <h6 class="mb-0">Aksi</h6>
                     </div>
                     <div class="card-body">
                         @can('update', $project)
                             <a href="{{ route('projects.edit', $project) }}" class="btn btn-outline-primary w-100 mb-3">
-                                <i class="bi bi-pencil"></i> Edit Project
+                                <i class="bi bi-pencil"></i> Ubah Proyek
                             </a>
                             <hr>
                         @endcan
@@ -276,104 +263,105 @@
                         @if($project->status === 'DRAFT' && auth()->user()->canManageProjects())
                             <!-- Publish Project -->
                             <form method="POST" action="{{ route('projects.publish', $project) }}"
-                                onsubmit="return confirm('Are you sure you want to publish this project? Auditors will be notified.');">
+                                onsubmit="return confirm('Apakah Anda yakin ingin mempublikasikan proyek ini? Auditor akan diberitahu.');">
                                 @csrf
                                 <button type="submit" class="btn btn-success w-100 mb-2">
-                                    <i class="bi bi-send"></i> Publish Project
+                                    <i class="bi bi-send"></i> Publikasikan Proyek
                                 </button>
                             </form>
-                            <p class="small text-muted mb-0">Publishing will change status to PUBLISHED and notify assigned
-                                auditors.</p>
+                            <p class="small text-muted mb-0">Mempublikasikan akan mengubah status menjadi DIPUBLIKASIKAN dan
+                                memberitahu auditor yang ditugaskan.</p>
 
                         @elseif($project->status === 'PUBLISHED')
                             @can('start', $project)
                                 <!-- Start Project -->
                                 <form method="POST" action="{{ route('projects.start', $project) }}"
-                                    onsubmit="return confirm('Are you ready to start this project?');">
+                                    onsubmit="return confirm('Apakah Anda siap untuk memulai proyek ini?');">
                                     @csrf
                                     <button type="submit" class="btn btn-primary w-100 mb-2">
-                                        <i class="bi bi-play-circle"></i> Start Project
+                                        <i class="bi bi-play-circle"></i> Mulai Proyek
                                     </button>
                                 </form>
-                                <p class="small text-muted mb-0">Starting the project will set status to ON PROGRESS.</p>
+                                <p class="small text-muted mb-0">Memulai proyek akan mengubah status menjadi SEDANG BERJALAN.</p>
                             @endcan
 
                         @elseif($project->status === 'ON_PROGRESS' && auth()->user()->isAuditor() && $project->auditors->contains('user_id', auth()->id()))
                             <!-- Mark as Done -->
                             <form method="POST" action="{{ route('projects.markAsDone', $project) }}"
-                                onsubmit="return confirm('Mark this project as done? It will be sent for review.');">
+                                onsubmit="return confirm('Tandai proyek ini sebagai selesai? Proyek akan dikirim untuk direview.');">
                                 @csrf
                                 <button type="submit" class="btn btn-warning w-100 mb-2">
-                                    <i class="bi bi-check-circle"></i> Mark as Done
+                                    <i class="bi bi-check-circle"></i> Tandai Selesai
                                 </button>
                             </form>
-                            <p class="small text-muted mb-0">This will change status to WAITING and notify the admin for review.
-                            </p>
+                            <p class="small text-muted mb-0">Ini akan mengubah status menjadi MENUNGGU REVIEW dan memberitahu
+                                manajer untuk direview.</p>
 
                         @elseif($project->status === 'WAITING')
                             @can('review', $project)
                                 <!-- Review & Close -->
                                 <a href="{{ route('reviews.create', $project) }}" class="btn btn-primary w-100 mb-2">
-                                    <i class="bi bi-star"></i> Review & Close
+                                    <i class="bi bi-star"></i> Review & Tutup
                                 </a>
-                                <p class="small text-muted mb-2">Review auditor performance and close this project.</p>
+                                <p class="small text-muted mb-2">Review kinerja auditor dan tutup proyek ini.</p>
                             @endcan
 
                             @if(auth()->user()->canManageProjects() && !$project->reviewer_id)
                                 <!-- Delegate to Supervisor (Optional) -->
                                 <button type="button" class="btn btn-outline-info w-100 mb-2" data-bs-toggle="modal"
                                     data-bs-target="#requestReviewModal">
-                                    <i class="bi bi-person-check"></i> Delegate to Supervisor (Optional)
+                                    <i class="bi bi-person-check"></i> Delegasikan ke Reviewer (Opsional)
                                 </button>
-                                <p class="small text-muted mb-2">Optional: Assign a supervisor to review and close this project on
-                                    your behalf.</p>
+                                <p class="small text-muted mb-2">Opsional: Tugaskan seorang reviewer untuk mereview dan menutup
+                                    proyek ini atas nama Anda.</p>
                             @endif
 
                             @can('cancelSubmission', $project)
                                 <!-- Cancel Submission -->
                                 <form method="POST" action="{{ route('projects.cancelSubmission', $project) }}"
-                                    onsubmit="return confirm('Return this project to Draft?');">
+                                    onsubmit="return confirm('Kembalikan proyek ini ke Draf?');">
                                     @csrf
                                     <button type="submit" class="btn btn-outline-danger w-100 mb-2">
-                                        <i class="bi bi-x-circle"></i> Cancel Submission
+                                        <i class="bi bi-x-circle"></i> Batalkan Submit
                                     </button>
                                 </form>
-                                <p class="small text-muted mb-0">Return project to Draft status.</p>
+                                <p class="small text-muted mb-0">Kembalikan proyek ke status Draf.</p>
                             @endcan
 
                             @can('cancelReviewSubmission', $project)
                                 <!-- Cancel Review Submission -->
                                 <form method="POST" action="{{ route('projects.cancelReviewSubmission', $project) }}"
-                                    onsubmit="return confirm('Cancel your review submission? Project will return to On Progress.');">
+                                    onsubmit="return confirm('Batalkan pengiriman review Anda? Proyek akan kembali ke status Sedang Berjalan.');">
                                     @csrf
                                     <button type="submit" class="btn btn-outline-warning w-100 mb-2">
-                                        <i class="bi bi-arrow-counterclockwise"></i> Cancel Review Submission
+                                        <i class="bi bi-arrow-counterclockwise"></i> Batalkan Submit Review
                                     </button>
                                 </form>
-                                <p class="small text-muted mb-0">Return project to On Progress to continue working.</p>
+                                <p class="small text-muted mb-0">Kembalikan proyek ke status Sedang Berjalan untuk melanjutkan
+                                    pengerjaan.</p>
                             @endcan
 
                         @elseif($project->status === 'CLOSED')
                             <div class="alert alert-success mb-2">
-                                <i class="bi bi-check-circle-fill"></i> This project is closed.
+                                <i class="bi bi-check-circle-fill"></i> Proyek ini telah selesai.
                             </div>
 
                             @can('review', $project)
                                 <!-- Edit Review -->
                                 <a href="{{ route('reviews.edit', $project) }}" class="btn btn-outline-primary w-100 mb-2">
-                                    <i class="bi bi-pencil"></i> Edit Review
+                                    <i class="bi bi-pencil"></i> Ubah Review
                                 </a>
                             @endcan
-                            <p class="small text-muted mb-0">Modify review scores and feedback.</p>
+                            <p class="small text-muted mb-0">Ubah nilai review dan umpan balik.</p>
 
                         @else
-                            <p class="text-muted mb-0">No actions available.</p>
+                            <p class="text-muted mb-0">Tidak ada aksi tersedia.</p>
                         @endif
 
                         <hr>
 
                         <a href="{{ route('projects.index') }}" class="btn btn-secondary w-100">
-                            <i class="bi bi-arrow-left"></i> Back to Projects
+                            <i class="bi bi-arrow-left"></i> Kembali ke Proyek
                         </a>
                     </div>
                 </div>
@@ -381,29 +369,29 @@
                 <!-- Project Timeline -->
                 <div class="card">
                     <div class="card-header">
-                        <h6 class="mb-0">Timeline</h6>
+                        <h6 class="mb-0">Linimasa</h6>
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled">
                             <li class="mb-2">
-                                <strong>Created:</strong><br>
+                                <strong>Dibuat:</strong><br>
                                 <small>{{ $project->created_at->format('d M Y H:i') }}</small>
                             </li>
                             @if($project->published_at)
                                 <li class="mb-2">
-                                    <strong>Published:</strong><br>
+                                    <strong>Dipublikasikan:</strong><br>
                                     <small>{{ $project->published_at->format('d M Y H:i') }}</small>
                                 </li>
                             @endif
                             @if($project->submitted_at)
                                 <li class="mb-2">
-                                    <strong>Submitted:</strong><br>
+                                    <strong>Diserahkan:</strong><br>
                                     <small>{{ $project->submitted_at->format('d M Y H:i') }}</small>
                                 </li>
                             @endif
                             @if($project->closed_at)
                                 <li class="mb-2">
-                                    <strong>Closed:</strong><br>
+                                    <strong>Selesai:</strong><br>
                                     <small>{{ $project->closed_at->format('d M Y H:i') }}</small>
                                 </li>
                             @endif
@@ -420,18 +408,18 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Request Review from Supervisor</h5>
+                        <h5 class="modal-title">Minta Review dari Reviewer</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <form method="POST" action="{{ route('projects.assignReviewer', $project) }}">
                         @csrf
                         @method('PATCH')
                         <div class="modal-body">
-                            <p>Assign a reviewer who will have permission to close this project after reviewing.</p>
+                            <p>Tunjuk seorang reviewer yang akan memiliki izin untuk menutup proyek ini setelah direview.</p>
                             <div class="mb-3">
-                                <label for="reviewer_id" class="form-label">Select Reviewer</label>
+                                <label for="reviewer_id" class="form-label">Pilih Reviewer</label>
                                 <select class="form-select" id="reviewer_id" name="reviewer_id" required>
-                                    <option value="">Choose a reviewer...</option>
+                                    <option value="">Pilih reviewer...</option>
                                     @foreach(\App\Models\User::where('role', 'reviewer')->get() as $reviewer)
                                         <option value="{{ $reviewer->id }}">
                                             {{ $reviewer->name }} ({{ $reviewer->email }})
@@ -441,8 +429,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Assign Reviewer</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">Tunjuk Reviewer</button>
                         </div>
                     </form>
                 </div>

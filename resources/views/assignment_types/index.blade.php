@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Manage Assignment Types')
+@section('title', 'Kelola Jenis Penugasan')
 
 @section('content')
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Assignment Types</h2>
+            <h2>Jenis Penugasan</h2>
             <a href="{{ route('assignment-types.create') }}" class="btn btn-primary">
-                <i class="bi bi-plus-lg"></i> Add Assignment Type
+                <i class="bi bi-plus-lg"></i> Tambah Jenis Penugasan
             </a>
         </div>
 
@@ -31,11 +31,11 @@
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th>Code</th>
-                                <th>Name</th>
-                                <th>Department</th>
-                                <th>Description</th>
-                                <th>Actions</th>
+                                <th>Kode</th>
+                                <th>Nama</th>
+                                <th>Departemen</th>
+                                <th>Deskripsi</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -48,19 +48,20 @@
                                     <td>
                                         <div class="btn-group">
                                             <a href="{{ route('assignment-types.edit', $type) }}"
-                                                class="btn btn-sm btn-outline-primary">Edit</a>
+                                                class="btn btn-sm btn-outline-primary">Ubah</a>
                                             <form action="{{ route('assignment-types.destroy', $type) }}" method="POST"
-                                                class="d-inline" onsubmit="return confirm('Are you sure?');">
+                                                class="d-inline" onsubmit="return confirm('Apakah Anda yakin?');">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">Hapus</button>
                                             </form>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-center py-4 text-muted">No assignment types found.</td>
+                                    <td colspan="5" class="text-center py-4 text-muted">Tidak ada jenis penugasan ditemukan.
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>

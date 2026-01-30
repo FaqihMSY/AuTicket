@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
-@section('title', 'User Management')
+@section('title', 'Kelola Pengguna')
 
 @section('content')
     <div class="container-fluid">
         <div class="row mb-4">
             <div class="col-md-6">
-                <h2>User Management</h2>
+                <h2>Kelola Pengguna</h2>
             </div>
             <div class="col-md-6 text-end">
                 <a href="{{ route('users.create') }}" class="btn btn-primary">
-                    <i class="bi bi-plus-circle"></i> Create New User
+                    <i class="bi bi-plus-circle"></i> Tambah Pengguna Baru
                 </a>
             </div>
         </div>
@@ -24,11 +24,11 @@
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>Name</th>
+                                            <th>Nama</th>
                                             <th>Email</th>
-                                            <th>Role</th>
-                                            <th>Department</th>
-                                            <th>Action</th>
+                                            <th>Peran</th>
+                                            <th>Departemen</th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -47,21 +47,21 @@
                                                         <span class="badge bg-secondary">Staff (L3)</span>
                                                     @endif
                                                 </td>
-                                                <td>{{ $user->department?->name ?? 'All Departments' }}</td>
+                                                <td>{{ $user->department?->name ?? 'Semua Departemen' }}</td>
                                                 <td>
                                                     @can('update', $user)
                                                         <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-warning">
-                                                            <i class="bi bi-pencil"></i> Edit
+                                                            <i class="bi bi-pencil"></i> Ubah
                                                         </a>
                                                     @endcan
 
                                                     @can('delete', $user)
                                                         <form action="{{ route('users.destroy', $user) }}" method="POST"
-                                                            class="d-inline" onsubmit="return confirm('Delete this user?');">
+                                                            class="d-inline" onsubmit="return confirm('Hapus pengguna ini?');">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="btn btn-sm btn-danger">
-                                                                <i class="bi bi-trash"></i> Delete
+                                                                <i class="bi bi-trash"></i> Hapus
                                                             </button>
                                                         </form>
                                                     @endcan
@@ -73,8 +73,8 @@
                             </div>
                         @else
                             <div class="alert alert-info">
-                                <h5>No Users Found</h5>
-                                <p class="mb-0">There are no users to display.</p>
+                                <h5>Tidak Ada Pengguna Ditemukan</h5>
+                                <p class="mb-0">Belum ada pengguna yang terdaftar.</p>
                             </div>
                         @endif
                     </div>

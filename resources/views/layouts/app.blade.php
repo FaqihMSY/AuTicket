@@ -48,23 +48,22 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
+                        <a class="nav-link" href="{{ route('dashboard') }}">Beranda</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('projects.index') }}">Projects</a>
+                        <a class="nav-link" href="{{ route('projects.index') }}">Proyek</a>
                     </li>
                     @if(auth()->user()->canManageProjects())
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('projects.create') }}">Create Project</a>
+                            <a class="nav-link" href="{{ route('projects.create') }}">Tambah Proyek</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('projects.pendingApprovals') }}">
-                                Pending Approvals
+                                Persetujuan
                                 @php
                                     $pendingCount = \App\Models\Project::where('status', 'DRAFT')
-                                        ->where('created_by', '!=', auth()->id())
                                         ->when(!auth()->user()->isAdmin(), function ($q) {
-                                            $q->where('department_id', auth()->user()->department_id);
+                                            $q->where('assigned_manager_id', auth()->id());
                                         })
                                         ->count();
                                 @endphp
@@ -74,12 +73,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('auditors.index') }}">Auditor Performance</a>
+                            <a class="nav-link" href="{{ route('auditors.index') }}">Kinerja Auditor</a>
                         </li>
                     @endif
                     @if(auth()->user()->isAdmin())
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('users.index') }}">User Management</a>
+                            <a class="nav-link" href="{{ route('users.index') }}">Manajemen Pengguna</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="masterDataDropdown" role="button"
@@ -87,9 +86,9 @@
                                 Master Data
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ route('departments.index') }}">Departments</a></li>
-                                <li><a class="dropdown-item" href="{{ route('assignment-types.index') }}">Assignment
-                                        Types</a></li>
+                                <li><a class="dropdown-item" href="{{ route('departments.index') }}">Departemen</a></li>
+                                <li><a class="dropdown-item" href="{{ route('assignment-types.index') }}">Jenis
+                                        Penugasan</a></li>
                             </ul>
                         </li>
                     @endif
@@ -101,18 +100,17 @@
                             {{ auth()->user()->name }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><span
-                                    class="dropdown-item-text">{{ auth()->user()->department?->name ?? 'All Departments' }}</span>
+                            <li><span class="dropdown-item-text">{{ user_role_label(auth()->user()->role) }}</span>
                             </li>
                             <li>
                                 <div class="theme-toggle-container">
                                     <div class="theme-toggle-wrapper">
-                                        <span class="theme-label">Light</span>
+                                        <span class="theme-label">Terang</span>
                                         <label class="theme-switch">
                                             <input type="checkbox">
                                             <span class="slider"></span>
                                         </label>
-                                        <span class="theme-label">Dark</span>
+                                        <span class="theme-label">Gelap</span>
                                     </div>
                                 </div>
                             </li>
@@ -122,7 +120,7 @@
                             <li>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button type="submit" class="dropdown-item">Logout</button>
+                                    <button type="submit" class="dropdown-item">Keluar</button>
                                 </form>
                             </li>
                         </ul>

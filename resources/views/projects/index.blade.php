@@ -1,24 +1,24 @@
 @extends('layouts.app')
 
-@section('title', 'Projects')
+@section('title', 'Proyek')
 
 @section('content')
     <div class="container-fluid">
         <div class="row mb-4">
             <div class="col-md-6">
-                <h2>Projects</h2>
+                <h2>Proyek</h2>
             </div>
             <div class="col-md-6 text-end">
                 <button type="button" class="btn btn-info me-2 text-white" data-bs-toggle="modal"
                     data-bs-target="#importModal">
-                    <i class="bi bi-upload"></i> Import CSV
+                    <i class="bi bi-upload"></i> Impor CSV
                 </button>
                 <a href="{{ route('projects.export', request()->query()) }}" class="btn btn-success me-2">
-                    <i class="bi bi-file-earmark-spreadsheet"></i> Export CSV
+                    <i class="bi bi-file-earmark-spreadsheet"></i> Ekspor CSV
                 </a>
                 @if(auth()->user()->canManageProjects() || auth()->user()->isAuditor())
                     <a href="{{ route('projects.create') }}" class="btn btn-primary">
-                        <i class="bi bi-plus-circle"></i> Create New Project
+                        <i class="bi bi-plus-circle"></i> Buat Proyek Baru
                     </a>
                 @endif
             </div>
@@ -32,28 +32,22 @@
                         <form method="GET" action="{{ route('projects.index') }}" class="row g-3">
                             <div class="col-md-3">
                                 <select name="status" class="form-select">
-                                    <option value="">All Status</option>
-                                    <option value="DRAFT" {{ request('status') == 'DRAFT' ? 'selected' : '' }}>Draft</option>
-                                    <option value="PUBLISHED" {{ request('status') == 'PUBLISHED' ? 'selected' : '' }}>
-                                        Published</option>
-                                    <option value="ON_PROGRESS" {{ request('status') == 'ON_PROGRESS' ? 'selected' : '' }}>On
-                                        Progress</option>
-                                    <option value="WAITING" {{ request('status') == 'WAITING' ? 'selected' : '' }}>Waiting
-                                        Approval</option>
-                                    <option value="CLOSED" {{ request('status') == 'CLOSED' ? 'selected' : '' }}>Closed
-                                    </option>
+                                    <option value="">Semua Status</option>
+                                    <option value="DRAFT" {{ request('status') == 'DRAFT' ? 'selected' : '' }}>Draf</option>
+                                    <option value="PUBLISHED" {{ request('status') == 'PUBLISHED' ? 'selected' : '' }}>Dipublikasikan</option>
+                                    <option value="ON_PROGRESS" {{ request('status') == 'ON_PROGRESS' ? 'selected' : '' }}>Sedang Berjalan</option>
+                                    <option value="WAITING" {{ request('status') == 'WAITING' ? 'selected' : '' }}>Menunggu Review</option>
+                                    <option value="CLOSED" {{ request('status') == 'CLOSED' ? 'selected' : '' }}>Selesai</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
                                 <select name="sort" class="form-select">
-                                    <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Newest Created
-                                    </option>
-                                    <option value="deadline" {{ request('sort') == 'deadline' ? 'selected' : '' }}>Closest
-                                        Deadline</option>
+                                    <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Terbaru</option>
+                                    <option value="deadline" {{ request('sort') == 'deadline' ? 'selected' : '' }}>Tenggat Terdekat</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <input type="text" name="search" class="form-control" placeholder="Search by title..."
+                                <input type="text" name="search" class="form-control" placeholder="Cari judul proyek..."
                                     value="{{ request('search') }}">
                             </div>
                             <div class="col-md-2">
@@ -75,13 +69,13 @@
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th style="min-width: 200px;">Title</th>
-                                            <th style="min-width: 150px;">Assignment Type</th>
+                                            <th style="min-width: 200px;">Judul</th>
+                                            <th style="min-width: 150px;">Jenis Penugasan</th>
                                             <th style="min-width: 100px;">Status</th>
-                                            <th style="min-width: 100px;">Priority</th>
-                                            <th style="min-width: 120px;">Deadline</th>
-                                            <th style="min-width: 150px;">Auditors</th>
-                                            <th style="min-width: 100px;">Action</th>
+                                            <th style="min-width: 100px;">Prioritas</th>
+                                            <th style="min-width: 120px;">Tenggat</th>
+                                            <th style="min-width: 150px;">Auditor</th>
+                                            <th style="min-width: 100px;">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -90,26 +84,14 @@
                                                 <td>{{ $project->title }}</td>
                                                 <td>{{ $project->assignmentType->name }}</td>
                                                 <td>
-                                                    @if($project->status === 'DRAFT')
-                                                        <span class="badge bg-secondary">Draft</span>
-                                                    @elseif($project->status === 'PUBLISHED')
-                                                        <span class="badge bg-info">Published</span>
-                                                    @elseif($project->status === 'ON_PROGRESS')
-                                                        <span class="badge bg-primary">On Progress</span>
-                                                    @elseif($project->status === 'WAITING')
-                                                        <span class="badge bg-warning">Waiting</span>
-                                                    @else
-                                                        <span class="badge bg-success">Closed</span>
-                                                    @endif
+                                                    <span class="badge {{ project_status_badge_class($project->status) }}">
+                                                        {{ project_status_label($project->status) }}
+                                                    </span>
                                                 </td>
                                                 <td>
-                                                    @if($project->priority === 'HIGH')
-                                                        <span class="badge bg-danger">High</span>
-                                                    @elseif($project->priority === 'MEDIUM')
-                                                        <span class="badge bg-warning">Medium</span>
-                                                    @else
-                                                        <span class="badge bg-info">Low</span>
-                                                    @endif
+                                                    <span class="badge {{ project_priority_badge_class($project->priority) }}">
+                                                        {{ project_priority_label($project->priority) }}
+                                                    </span>
                                                 </td>
                                                 <td>
                                                     @if($project->isDueSoon())
@@ -124,7 +106,7 @@
                                                 </td>
                                                 <td>
                                                     <a href="{{ route('projects.show', $project) }}"
-                                                        class="btn btn-sm btn-primary">View</a>
+                                                        class="btn btn-sm btn-primary">Lihat</a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -134,8 +116,8 @@
 
                             <div class="mt-3 d-flex justify-content-between align-items-center">
                                 <div>
-                                    Showing {{ $projects->firstItem() ?? 0 }} to {{ $projects->lastItem() ?? 0 }} of
-                                    {{ $projects->total() }} projects
+                                    Menampilkan {{ $projects->firstItem() ?? 0 }} sampai {{ $projects->lastItem() ?? 0 }} dari
+                                    {{ $projects->total() }} proyek
                                 </div>
                                 <div>
                                     {{ $projects->links() }}
@@ -143,8 +125,8 @@
                             </div>
                         @else
                             <div class="alert alert-info">
-                                <h5>No Projects Found</h5>
-                                <p class="mb-0">There are no projects to display.</p>
+                                <h5>Proyek Tidak Ditemukan</h5>
+                                <p class="mb-0">Tidak ada proyek untuk ditampilkan.</p>
                             </div>
                         @endif
                     </div>
@@ -158,25 +140,24 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Import Projects</h5>
+                    <h5 class="modal-title">Impor Proyek</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form action="{{ route('projects.import') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
-                        <p>Upload a CSV file to import projects. The format must match the Export format.</p>
+                        <p>Unggah file CSV untuk mengimpor proyek. Format harus sesuai dengan format Ekspor.</p>
                         <div class="mb-3">
-                            <label for="csv_file" class="form-label">CSV File</label>
+                            <label for="csv_file" class="form-label">File CSV</label>
                             <input type="file" class="form-control" id="csv_file" name="csv_file" accept=".csv" required>
                         </div>
                         <div class="alert alert-warning small">
-                            <i class="bi bi-exclamation-triangle"></i> Ensure "Auditor Emails" are correct. Invalid emails
-                            will be ignored.
+                            <i class="bi bi-exclamation-triangle"></i> Pastikan "Auditor Emails" benar. Email yang tidak valid akan diabaikan.
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Import</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        <button type="submit" class="btn btn-primary">Impor</button>
                     </div>
                 </form>
             </div>

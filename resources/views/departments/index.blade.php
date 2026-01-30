@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Manage Departments')
+@section('title', 'Kelola Departemen')
 
 @section('content')
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Departments</h2>
+            <h2>Departemen</h2>
             <a href="{{ route('departments.create') }}" class="btn btn-primary">
-                <i class="bi bi-plus-lg"></i> Add Department
+                <i class="bi bi-plus-lg"></i> Tambah Departemen
             </a>
         </div>
 
@@ -31,10 +31,10 @@
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th>Code</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Actions</th>
+                                <th>Kode</th>
+                                <th>Nama</th>
+                                <th>Deskripsi</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -46,19 +46,19 @@
                                     <td>
                                         <div class="btn-group">
                                             <a href="{{ route('departments.edit', $department) }}"
-                                                class="btn btn-sm btn-outline-primary">Edit</a>
+                                                class="btn btn-sm btn-outline-primary">Ubah</a>
                                             <form action="{{ route('departments.destroy', $department) }}" method="POST"
-                                                class="d-inline" onsubmit="return confirm('Are you sure?');">
+                                                class="d-inline" onsubmit="return confirm('Apakah Anda yakin?');">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">Hapus</button>
                                             </form>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="text-center py-4 text-muted">No departments found.</td>
+                                    <td colspan="4" class="text-center py-4 text-muted">Tidak ada departemen ditemukan.</td>
                                 </tr>
                             @endforelse
                         </tbody>

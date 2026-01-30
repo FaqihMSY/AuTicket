@@ -1,17 +1,17 @@
 @extends('layouts.app')
 
-@section('title', 'Pending Approvals')
+@section('title', 'Menunggu Persetujuan')
 
 @section('content')
     <div class="container-fluid">
         <div class="row mb-4">
             <div class="col-md-6">
-                <h2>Pending Approvals</h2>
-                <p class="text-muted">Draft projects submitted by others awaiting your approval</p>
+                <h2>Menunggu Persetujuan</h2>
+                <p class="text-muted">Proyek draf yang diajukan oleh orang lain yang menunggu persetujuan Anda</p>
             </div>
             <div class="col-md-6 text-end">
                 <a href="{{ route('projects.index') }}" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left"></i> Back to All Projects
+                    <i class="bi bi-arrow-left"></i> Kembali ke Semua Proyek
                 </a>
             </div>
         </div>
@@ -24,9 +24,9 @@
                         <form method="GET" action="{{ route('projects.pendingApprovals') }}" class="row g-3">
                             @if(auth()->user()->isAdmin())
                                 <div class="col-md-3">
-                                    <label class="form-label small">Department</label>
+                                    <label class="form-label small">Departemen</label>
                                     <select name="department" class="form-select">
-                                        <option value="">All Departments</option>
+                                        <option value="">Semua Departemen</option>
                                         @foreach($departments as $dept)
                                             <option value="{{ $dept->id }}" {{ request('department') == $dept->id ? 'selected' : '' }}>
                                                 {{ $dept->name }}
@@ -36,8 +36,8 @@
                                 </div>
                             @endif
                             <div class="col-md-{{ auth()->user()->isAdmin() ? '6' : '9' }}">
-                                <label class="form-label small">Search</label>
-                                <input type="text" name="search" class="form-control" placeholder="Search by title or submitter name..."
+                                <label class="form-label small">Cari</label>
+                                <input type="text" name="search" class="form-control" placeholder="Cari judul atau nama pengaju..."
                                     value="{{ request('search') }}">
                             </div>
                             <div class="col-md-3">
@@ -62,15 +62,15 @@
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th style="min-width: 200px;">Title</th>
-                                            <th style="min-width: 150px;">Submitted By</th>
-                                            <th style="min-width: 120px;">Department</th>
-                                            <th style="min-width: 150px;">Assignment Type</th>
-                                            <th style="min-width: 100px;">Priority</th>
-                                            <th style="min-width: 120px;">Deadline</th>
-                                            <th style="min-width: 150px;">Assigned Auditors</th>
-                                            <th style="min-width: 120px;">Submitted</th>
-                                            <th style="min-width: 150px;">Actions</th>
+                                            <th style="min-width: 200px;">Judul</th>
+                                            <th style="min-width: 150px;">Diajukan Oleh</th>
+                                            <th style="min-width: 120px;">Departemen</th>
+                                            <th style="min-width: 150px;">Jenis Penugasan</th>
+                                            <th style="min-width: 100px;">Prioritas</th>
+                                            <th style="min-width: 120px;">Tenggat</th>
+                                            <th style="min-width: 150px;">Auditor yang Ditugaskan</th>
+                                            <th style="min-width: 120px;">Diajukan</th>
+                                            <th style="min-width: 150px;">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -88,13 +88,9 @@
                                                 </td>
                                                 <td>{{ $project->assignmentType->name }}</td>
                                                 <td>
-                                                    @if($project->priority === 'HIGH')
-                                                        <span class="badge bg-danger">High</span>
-                                                    @elseif($project->priority === 'MEDIUM')
-                                                        <span class="badge bg-warning">Medium</span>
-                                                    @else
-                                                        <span class="badge bg-info">Low</span>
-                                                    @endif
+                                                    <span class="badge {{ project_priority_badge_class($project->priority) }}">
+                                                        {{ project_priority_label($project->priority) }}
+                                                    </span>
                                                 </td>
                                                 <td>
                                                     @if($project->isDueSoon())
@@ -128,19 +124,19 @@
                                                     <div class="btn-group" role="group">
                                                         <a href="{{ route('projects.show', $project) }}" 
                                                            class="btn btn-sm btn-outline-primary"
-                                                           title="View Details">
-                                                            <i class="bi bi-eye"></i> View
+                                                           title="Lihat Detail">
+                                                            <i class="bi bi-eye"></i> Lihat
                                                         </a>
                                                         @can('publish', $project)
                                                             <form action="{{ route('projects.publish', $project) }}" 
                                                                   method="POST" 
                                                                   class="d-inline"
-                                                                  onsubmit="return confirm('Approve and publish this project?')">
+                                                                  onsubmit="return confirm('Setujui dan publikasikan proyek ini?')">
                                                                 @csrf
                                                                 <button type="submit" 
                                                                         class="btn btn-sm btn-success"
-                                                                        title="Approve & Publish">
-                                                                    <i class="bi bi-check-circle"></i> Approve
+                                                                        title="Setujui & Publikasikan">
+                                                                    <i class="bi bi-check-circle"></i> Setujui
                                                                 </button>
                                                             </form>
                                                         @endcan
@@ -154,8 +150,8 @@
 
                             <div class="mt-3 d-flex justify-content-between align-items-center">
                                 <div>
-                                    Showing {{ $projects->firstItem() ?? 0 }} to {{ $projects->lastItem() ?? 0 }} of
-                                    {{ $projects->total() }} pending approvals
+                                    Menampilkan {{ $projects->firstItem() ?? 0 }} sampai {{ $projects->lastItem() ?? 0 }} dari
+                                    {{ $projects->total() }} proyek menunggu persetujuan
                                 </div>
                                 <div>
                                     {{ $projects->links() }}
@@ -163,8 +159,8 @@
                             </div>
                         @else
                             <div class="alert alert-success">
-                                <h5><i class="bi bi-check-circle"></i> All Clear!</h5>
-                                <p class="mb-0">There are no pending approvals at the moment. All drafts have been reviewed.</p>
+                                <h5><i class="bi bi-check-circle"></i> Semua Beres!</h5>
+                                <p class="mb-0">Tidak ada proyek yang menunggu persetujuan saat ini. Semua draf telah direview.</p>
                             </div>
                         @endif
                     </div>

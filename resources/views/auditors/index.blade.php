@@ -3,9 +3,9 @@
 @section('content')
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Auditor Performance</h2>
+            <h2>Kinerja Auditor</h2>
             <a href="{{ route('auditors.export') }}" class="btn btn-success">
-                <i class="bi bi-file-earmark-spreadsheet"></i> Export CSV
+                <i class="bi bi-file-earmark-spreadsheet"></i> Ekspor CSV
             </a>
         </div>
 
@@ -15,13 +15,13 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Specialization</th>
-                                <th>Performance Score</th>
-                                <th>Completed Projects</th>
-                                <th>Active Projects</th>
-                                <th>Workload</th>
-                                <th>Action</th>
+                                <th>Nama</th>
+                                <th>Spesialisasi</th>
+                                <th>Skor Kinerja</th>
+                                <th>Proyek Selesai</th>
+                                <th>Proyek Aktif</th>
+                                <th>Beban Kerja</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -41,13 +41,13 @@
                                     </td>
                                     <td>
                                         <a href="{{ route('auditors.show', $auditor) }}" class="btn btn-sm btn-primary">
-                                            View Profile
+                                            Lihat Profil
                                         </a>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center text-muted">No auditors found</td>
+                                    <td colspan="7" class="text-center text-muted">Tidak ada auditor ditemukan</td>
                                 </tr>
                             @endforelse
                         </tbody>

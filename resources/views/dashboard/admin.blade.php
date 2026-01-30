@@ -109,11 +109,11 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Quick Actions</h5>
+                        <h5 class="mb-0">Aksi Cepat</h5>
                     </div>
                     <div class="card-body">
                         <a href="{{ route('projects.create') }}" class="btn btn-primary">
-                            <i class="bi bi-plus-circle"></i> Create New Project
+                            <i class="bi bi-plus-circle"></i> Tambah Proyek Baru
                         </a>
                     </div>
                 </div>
@@ -121,12 +121,11 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Team Performance</h5>
+                        <h5 class="mb-0">Kinerja Tim</h5>
                     </div>
                     <div class="card-body">
-                        {{-- <p class="text-muted mb-3">Monitor auditor performance and review history</p> --}}
                         <a href="{{ route('auditors.index') }}" class="btn btn-primary">
-                            View Auditor Performance
+                            Lihat Kinerja Auditor
                         </a>
                     </div>
                 </div>
@@ -139,19 +138,19 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="mb-0">Projects Waiting Approval</h5>
+                            <h5 class="mb-0">Proyek Menunggu Persetujuan</h5>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>Title</th>
-                                            <th>Assignment Type</th>
-                                            <th>Submitted Date</th>
-                                            <th>Deadline</th>
-                                            <th>Auditors</th>
-                                            <th>Action</th>
+                                            <th>Judul</th>
+                                            <th>Jenis Penugasan</th>
+                                            <th>Tanggal Submit</th>
+                                            <th>Tenggat Waktu</th>
+                                            <th>Auditor</th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -172,7 +171,7 @@
                                                 <td>{{ $project->auditors->pluck('user.name')->join(', ') }}</td>
                                                 <td>
                                                     <a href="{{ route('projects.show', $project) }}" class="btn btn-sm btn-primary">
-                                                        View
+                                                        Lihat
                                                     </a>
                                                 </td>
                                             </tr>
