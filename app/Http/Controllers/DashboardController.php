@@ -25,14 +25,12 @@ class DashboardController extends Controller
     private function adminDashboard()
     {
         $user = auth()->user();
-        $departmentId = $user->department_id;
 
         // Base query for stats
         $projectQuery = Project::query();
 
-        // Only filter by department if NOT admin
-        if (!$user->isAdmin()) {
-            $projectQuery->where('department_id', $departmentId);
+        if ($user->isPengawas()) {
+            $projectQuery->where('published_by', $user->id);
         }
 
         $stats = [
@@ -50,8 +48,8 @@ class DashboardController extends Controller
             ->latest()
             ->take(5);
 
-        if (!$user->isAdmin()) {
-            $waitingProjectsQuery->where('department_id', $departmentId);
+        if ($user->isPengawas()) {
+            $waitingProjectsQuery->where('published_by', $user->id);
         }
 
         $waitingProjects = $waitingProjectsQuery->get();

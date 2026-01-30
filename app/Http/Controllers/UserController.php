@@ -28,9 +28,7 @@ class UserController extends Controller
     {
         $this->authorize('create', User::class);
 
-        $departments = Department::all();
-
-        return view('users.create', compact('departments'));
+        return view('users.create');
     }
 
     public function store(Request $request)
@@ -42,16 +40,11 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8|confirmed',
             'role' => 'required|in:admin,pengawas,reviewer,staff',
-            'department_id' => 'nullable|exists:departments,id',
             'specialization' => 'nullable|string|max:255|required_if:role,staff',
         ]);
 
         $userData = collect($validated)->except('specialization')->toArray();
         $userData['password'] = Hash::make($userData['password']);
-
-        if ($validated['role'] === 'staff') {
-            $userData['department_id'] = null;
-        }
 
         $user = User::create($userData);
 
@@ -70,9 +63,7 @@ class UserController extends Controller
     {
         $this->authorize('update', $user);
 
-        $departments = Department::all();
-
-        return view('users.edit', compact('user', 'departments'));
+        return view('users.edit', compact('user'));
     }
 
     public function update(Request $request, User $user)
@@ -84,7 +75,6 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|min:8|confirmed',
             'role' => 'required|in:admin,pengawas,reviewer,staff',
-            'department_id' => 'nullable|exists:departments,id',
             'specialization' => 'nullable|string|max:255|required_if:role,staff',
         ]);
 
@@ -94,11 +84,6 @@ class UserController extends Controller
             $userData['password'] = Hash::make($userData['password']);
         } else {
             unset($userData['password']);
-        }
-
-        // Set department_id to NULL for staff (Auditor) role
-        if ($validated['role'] === 'staff') {
-            $userData['department_id'] = null;
         }
 
         $user->update($userData);

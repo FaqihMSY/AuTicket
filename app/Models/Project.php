@@ -13,6 +13,7 @@ class Project extends Model
         'department_id',
         'assignment_type_id',
         'created_by',
+        'assigned_manager_id',
         'published_by',
         'reviewer_id',
         'title',
@@ -59,6 +60,11 @@ class Project extends Model
     public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewer_id');
+    }
+
+    public function assignedManager(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_manager_id');
     }
 
     public function auditors(): BelongsToMany

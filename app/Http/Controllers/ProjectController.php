@@ -24,28 +24,17 @@ class ProjectController extends Controller
         $user = auth()->user();
 
         // 1. Authorization Filter (Show only relevant projects)
-        if (!$user->isAdmin()) {
-            if ($user->canManageProjects()) {
-                // Manager/Pengawas: See projects in their department
-                $query->where('department_id', $user->department_id);
-            } elseif ($user->isAuditor()) {
-                // Auditor Visibility Logic:
-                // 1. Assigned Projects (Any status)
-                // 2. Created by me (Drafts)
-                // 3. Published in my department (Open for taking)
-                if ($user->auditor) {
-                    $query->where(function ($q) use ($user) {
-                        // 1. Assigned
-                        $q->whereHas('auditors', function ($subQ) use ($user) {
-                            $subQ->where('auditors.id', $user->auditor->id);
-                        })
-                            // 2. Created by Me
-                            ->orWhere('created_by', $user->id)
-                            ->orWhere('status', 'PUBLISHED');
-                    });
-                } else {
-                    abort(403, 'User is staff but has no auditor profile.');
-                }
+        if (!$user->isAdmin() && !$user->canManageProjects()) {
+            if ($user->auditor) {
+                $query->where(function ($q) use ($user) {
+                    $q->whereHas('auditors', function ($subQ) use ($user) {
+                        $subQ->where('auditors.id', $user->auditor->id);
+                    })
+                        ->orWhere('created_by', $user->id)
+                        ->orWhere('status', 'PUBLISHED');
+                });
+            } else {
+                abort(403, 'User is staff but has no auditor profile.');
             }
         }
 
@@ -85,11 +74,10 @@ class ProjectController extends Controller
         }
 
         $query = Project::query()
-            ->where('status', 'DRAFT')
-            ->where('created_by', '!=', $user->id);
+            ->where('status', 'DRAFT');
 
         if (!$user->isAdmin()) {
-            $query->where('department_id', $user->department_id);
+            $query->where('assigned_manager_id', $user->id);
         }
 
         if ($request->filled('department')) {
@@ -273,7 +261,9 @@ class ProjectController extends Controller
         $departments = Department::all();
         $reviewers = User::where('role', 'reviewer')->get();
 
-        return view('projects.create', compact('assignmentTypes', 'departments', 'reviewers'));
+        $managers = User::whereIn('role', ['admin', 'pengawas'])->get();
+
+        return view('projects.create', compact('assignmentTypes', 'departments', 'reviewers', 'managers'));
     }
 
     public function store(Request $request)
@@ -291,8 +281,20 @@ class ProjectController extends Controller
             'auditor_ids' => 'required|array|min:1',
             'auditor_ids.*' => 'exists:auditors,id',
             'reviewer_id' => 'nullable|exists:users,id',
+            'assigned_manager_id' => auth()->user()->isAuditor() ? 'required|exists:users,id' : 'nullable|exists:users,id',
             'instruction_files.*' => 'nullable|file|mimes:pdf,xlsx,xls,doc,docx|max:10240',
         ]);
+
+        if (auth()->user()->isAuditor() && isset($validated['assigned_manager_id'])) {
+            $manager = User::findOrFail($validated['assigned_manager_id']);
+            if (!$manager->canManageProjects()) {
+                return back()->with('error', 'Selected user is not a manager.');
+            }
+        }
+
+        $assignedManagerId = auth()->user()->canManageProjects()
+            ? auth()->id()
+            : ($validated['assigned_manager_id'] ?? null);
 
         // Logic Status: FORCE DRAFT for everyone initially
         // (Managers can Publish later, Auditors must wait for Manager)
@@ -302,6 +304,7 @@ class ProjectController extends Controller
             'department_id' => $validated['department_id'],
             'assignment_type_id' => $validated['assignment_type_id'],
             'created_by' => auth()->id(),
+            'assigned_manager_id' => $assignedManagerId,
             'reviewer_id' => $validated['reviewer_id'] ?? null,
             'title' => $validated['title'],
             'description' => $validated['description'],

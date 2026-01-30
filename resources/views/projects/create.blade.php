@@ -172,6 +172,32 @@
                                 @enderror
                             </div>
 
+                            <!-- Assign to Manager (Required for Staff) -->
+                            @if(auth()->user()->isAuditor())
+                                <div class="mb-4">
+                                    <label for="assigned_manager_id" class="form-label">
+                                        Assign to Manager <span class="text-danger">*</span>
+                                        <i class="bi bi-info-circle text-muted" data-bs-toggle="tooltip" 
+                                           title="Select the manager who will approve and publish this project"></i>
+                                    </label>
+                                    <select class="form-select @error('assigned_manager_id') is-invalid @enderror" 
+                                            id="assigned_manager_id" name="assigned_manager_id" required>
+                                        <option value="">Choose a manager...</option>
+                                        @foreach($managers as $manager)
+                                            <option value="{{ $manager->id }}" {{ old('assigned_manager_id') == $manager->id ? 'selected' : '' }}>
+                                                {{ $manager->name }} ({{ ucfirst($manager->role) }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <small class="text-muted">
+                                        This manager will review and approve your draft project
+                                    </small>
+                                    @error('assigned_manager_id')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            @endif
+
                             <!-- Reviewer Selection -->
                             @if(auth()->user()->canManageProjects())
                                 <div class="mb-4">

@@ -78,6 +78,20 @@
                                 <th>Created At:</th>
                                 <td>{{ $project->created_at->format('d M Y H:i') }}</td>
                             </tr>
+                            @if($project->status === 'DRAFT' && $project->assigned_manager_id)
+                                <tr>
+                                    <th>Assigned to Manager:</th>
+                                    <td>
+                                        <strong>{{ $project->assignedManager->name }}</strong>
+                                        ({{ ucfirst($project->assignedManager->role) }})
+                                        @if(auth()->id() === $project->assigned_manager_id)
+                                            <span class="badge bg-warning">Waiting for your approval</span>
+                                        @endif
+                                        <br>
+                                        <small class="text-muted">Will approve and publish this project</small>
+                                    </td>
+                                </tr>
+                            @endif
                             @if($project->published_by)
                                 <tr>
                                     <th>Published By:</th>
