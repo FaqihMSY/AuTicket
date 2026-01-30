@@ -13,7 +13,6 @@ class DatabaseSeeder extends Seeder
             AssignmentTypeSeeder::class,
             UserSeeder::class,
             AuditorSeeder::class,
-            ProjectSeeder::class,
         ]);
     }
 }
